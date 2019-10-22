@@ -29,8 +29,8 @@ public class UIInputOnGUI : MonoBehaviour
 
 	void OnGUI ()
 	{
-		if (Event.current.rawType == EventType.KeyDown)
-			mInput.ProcessEvent(Event.current);
+		if (UnityEngine.Event.current.rawType == EventType.KeyDown)
+			mInput.ProcessEvent(UnityEngine.Event.current);
 	}
 #endif
 }

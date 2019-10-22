@@ -4,6 +4,11 @@
     <list default="true" id="78bd6dd1-da32-4688-831b-1c9bd9fc6a9a" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.ASTICOT/.idea/contentModel.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ASTICOT/.idea/contentModel.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.ASTICOT/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ASTICOT/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/NGUI/Scripts/Editor/UIPanelInspector.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/NGUI/Scripts/Editor/UIPanelInspector.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/NGUI/Scripts/Editor/UIWidgetInspector.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/NGUI/Scripts/Editor/UIWidgetInspector.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/NGUI/Scripts/UI/UIInput.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/NGUI/Scripts/UI/UIInput.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/NGUI/Scripts/UI/UIInputOnGUI.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/NGUI/Scripts/UI/UIInputOnGUI.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Events Scripts/EventManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Events Scripts/EventManager.cs" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -17,21 +22,31 @@
   </component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Events Scripts/EventManager.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Assets/Scripts/JobifiedClientBehaviour.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/CustomMasterClass/AsticotMonoBehaviour.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Assets/Scripts/ServerUpdateJob.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/NGUI/Scripts/UI/UIInputOnGUI.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Packages/com.unity.transport/Runtime/NetworkConnection.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Assets/Scripts/ClientUpdateJob.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/GameData/GameHandlerData.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Packages/com.unity.transport/Runtime/DataStream.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/NGUI/Scripts/Editor/UIDrawCallInspector.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/JobifiedClientBehaviour.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/ServerUpdateJob.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/NGUI/Scripts/UI/UIInput.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/ClientUpdateJob.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/NGUI/Scripts/Editor/UIPanelInspector.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/NGUI/Scripts/Editor/UIWidgetInspector.cs" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/Assets/Scripts/ServerUpdateJob.cs" />
-        <option value="$PROJECT_DIR$/Assets/Scripts/Events Scripts/EventManager.cs" />
         <option value="$PROJECT_DIR$/Assets/Scripts/CustomMasterClass/AsticotMonoBehaviour.cs" />
         <option value="$PROJECT_DIR$/Assets/Scripts/GameData/GameHandlerData.cs" />
+        <option value="$PROJECT_DIR$/Assets/NGUI/Scripts/UI/UIInput.cs" />
+        <option value="$PROJECT_DIR$/Assets/NGUI/Scripts/Editor/UIDrawCallInspector.cs" />
+        <option value="$PROJECT_DIR$/Assets/NGUI/Scripts/UI/UIInputOnGUI.cs" />
+        <option value="$PROJECT_DIR$/Assets/NGUI/Scripts/Editor/UIPanelInspector.cs" />
+        <option value="$PROJECT_DIR$/Assets/NGUI/Scripts/Editor/UIWidgetInspector.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Events Scripts/EventManager.cs" />
       </list>
     </option>
   </component>
@@ -90,7 +105,7 @@
       <updated>1571779464496</updated>
       <workItem from="1571779467577" duration="258000" />
       <workItem from="1571779745219" duration="220000" />
-      <workItem from="1571780044961" duration="2707000" />
+      <workItem from="1571780044961" duration="3283000" />
     </task>
     <servers />
   </component>

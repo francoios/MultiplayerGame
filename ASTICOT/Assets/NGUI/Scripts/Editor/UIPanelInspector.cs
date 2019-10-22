@@ -85,7 +85,7 @@ public class UIPanelInspector : UIRectEditor
 		NGUIEditorTools.HideMoveTool(true);
 		if (!UIWidget.showHandles) return;
 
-		Event e = Event.current;
+		UnityEngine.Event e = UnityEngine.Event.current;
 		int id = GUIUtility.GetControlID(s_Hash, FocusType.Passive);
 		EventType type = e.GetTypeForControl(id);
 		Transform t = mPanel.cachedTransform;

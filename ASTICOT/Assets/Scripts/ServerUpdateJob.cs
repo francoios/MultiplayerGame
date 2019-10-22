@@ -34,8 +34,7 @@ internal struct ServerUpdateJob : IJobParallelFor
                 using (DataStreamWriter writer = new DataStreamWriter(4, Allocator.Temp))
                 {
                     writer.Write(number);
-                    this.connections[index].Send(this.driver, writer);
-                    this.driver.Send(this.connections[index], writer);
+                    this.driver.Send(NetworkPipeline.Null, this.connections[index], writer);
                 }
             }
             else if (cmd == NetworkEvent.Type.Disconnect)

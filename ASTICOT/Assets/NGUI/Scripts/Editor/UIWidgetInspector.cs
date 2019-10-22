@@ -233,7 +233,7 @@ public class UIWidgetInspector : UIRectEditor
 	/// Determine what kind of pivot point is under the mouse and update the cursor accordingly.
 	/// </summary>
 
-	static public UIWidget.Pivot GetPivotUnderMouse (Vector3[] worldPos, Event e, bool[] resizable, bool movable, ref Action action)
+	static public UIWidget.Pivot GetPivotUnderMouse (Vector3[] worldPos, UnityEngine.Event e, bool[] resizable, bool movable, ref Action action)
 	{
 		// Time to figure out what kind of action is underneath the mouse
 		UIWidget.Pivot pivotUnderMouse = UIWidget.Pivot.Center;

@@ -897,7 +897,7 @@ public class UIInput : MonoBehaviour
 	/// Handle the specified event.
 	/// </summary>
 
-	public virtual bool ProcessEvent (Event ev)
+	public virtual bool ProcessEvent (UnityEngine.Event ev)
 	{
 		if (label == null) return false;
 

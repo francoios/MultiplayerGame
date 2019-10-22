@@ -1,7 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="78bd6dd1-da32-4688-831b-1c9bd9fc6a9a" name="Default Changelist" comment="" />
+    <list default="true" id="78bd6dd1-da32-4688-831b-1c9bd9fc6a9a" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.ASTICOT/.idea/contentModel.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ASTICOT/.idea/contentModel.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.ASTICOT/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ASTICOT/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/NGUI/Scripts/Editor/UIPanelInspector.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/NGUI/Scripts/Editor/UIPanelInspector.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/NGUI/Scripts/Editor/UIWidgetInspector.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/NGUI/Scripts/Editor/UIWidgetInspector.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/NGUI/Scripts/UI/UIInput.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/NGUI/Scripts/UI/UIInput.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/NGUI/Scripts/UI/UIInputOnGUI.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/NGUI/Scripts/UI/UIInputOnGUI.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Events Scripts/EventManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Events Scripts/EventManager.cs" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -10,18 +18,51 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+    <option name="ROOT_SYNC" value="DONT_SYNC" />
   </component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="file://$PROJECT_DIR$/Assets/Scripts/ServerUpdateJob.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Packages/com.unity.transport/Runtime/NetworkConnection.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Assets/Scripts/ClientUpdateJob.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Events Scripts/EventManager.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/CustomMasterClass/AsticotMonoBehaviour.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/NGUI/Scripts/UI/UIInputOnGUI.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Packages/com.unity.transport/Runtime/NetworkConnection.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/GameData/GameHandlerData.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Packages/com.unity.transport/Runtime/DataStream.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/NGUI/Scripts/Editor/UIDrawCallInspector.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/JobifiedClientBehaviour.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/ServerUpdateJob.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/NGUI/Scripts/UI/UIInput.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/ClientUpdateJob.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/NGUI/Scripts/Editor/UIPanelInspector.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/NGUI/Scripts/Editor/UIWidgetInspector.cs" root0="FORCE_HIGHLIGHTING" />
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/Assets/Scripts/ServerUpdateJob.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/CustomMasterClass/AsticotMonoBehaviour.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/GameData/GameHandlerData.cs" />
+        <option value="$PROJECT_DIR$/Assets/NGUI/Scripts/UI/UIInput.cs" />
+        <option value="$PROJECT_DIR$/Assets/NGUI/Scripts/Editor/UIDrawCallInspector.cs" />
+        <option value="$PROJECT_DIR$/Assets/NGUI/Scripts/UI/UIInputOnGUI.cs" />
+        <option value="$PROJECT_DIR$/Assets/NGUI/Scripts/Editor/UIPanelInspector.cs" />
+        <option value="$PROJECT_DIR$/Assets/NGUI/Scripts/Editor/UIWidgetInspector.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Events Scripts/EventManager.cs" />
+      </list>
+    </option>
   </component>
   <component name="ProjectId" id="1SZmOyGQQS4w0Vo27OqHbKPOejl" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="PropertiesComponent">
+    <property name="Discover.Launch.Via.Unity" value="true" />
     <property name="Rider.DefaultBreakpoints.AreToggled" value="true" />
     <property name="Rider.ProjectViewActivator.IsNotFirstRun" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.detected.package.tslint" value="true" />
+    <property name="node.js.path.for.package.eslint" value="project" />
+    <property name="node.js.path.for.package.tslint" value="project" />
+    <property name="node.js.selected.package.eslint" value="(autodetect)" />
+    <property name="node.js.selected.package.tslint" value="(autodetect)" />
     <property name="settings.editor.selected.configurable" value="vcs.Git" />
   </component>
   <component name="RunDashboard">
@@ -64,6 +105,7 @@
       <updated>1571779464496</updated>
       <workItem from="1571779467577" duration="258000" />
       <workItem from="1571779745219" duration="220000" />
+      <workItem from="1571780044961" duration="3283000" />
     </task>
     <servers />
   </component>
@@ -71,7 +113,7 @@
     <option name="version" value="1" />
   </component>
   <component name="UnityProjectConfiguration" hasMinimizedUI="true" />
-  <component name="UnityUnitTestConfiguration" currentTestLauncher="NUnit" />
+  <component name="UnityUnitTestConfiguration" currentTestLauncher="EditMode" />
   <component name="Vcs.Log.Tabs.Properties">
     <option name="TAB_STATES">
       <map>

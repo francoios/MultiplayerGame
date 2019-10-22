@@ -10,6 +10,7 @@ internal struct ServerUpdateJob : IJobParallelFor
 {
     public UdpNetworkDriver.Concurrent driver;
     public NativeArray<NetworkConnection> connections;
+    public NetworkPipeline pipeline;
 
     public void Execute(int index)
     {
@@ -34,8 +35,7 @@ internal struct ServerUpdateJob : IJobParallelFor
                 using (DataStreamWriter writer = new DataStreamWriter(4, Allocator.Temp))
                 {
                     writer.Write(number);
-                    this.connections[index].Send(this.driver, writer);
-                    this.driver.Send(this.connections[index], writer);
+                    this.driver.Send(this.pipeline, this.connections[index], writer);
                 }
             }
             else if (cmd == NetworkEvent.Type.Disconnect)

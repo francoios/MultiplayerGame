@@ -334,7 +334,17 @@
         </e>
         <e p="Scripts" t="Include">
           <e p="ClientUpdateJob.cs" t="Include" />
+          <e p="CustomMasterClass" t="Include">
+            <e p="AsticotMonoBehaviour.cs" t="Include" />
+          </e>
+          <e p="Events Scripts" t="Include">
+            <e p="EventManager.cs" t="Include" />
+          </e>
+          <e p="GameData" t="Include">
+            <e p="GameHandlerData.cs" t="Include" />
+          </e>
           <e p="JobifiedClientBehaviour.cs" t="Include" />
+          <e p="JobifiedServerBehaviour.cs" t="Include" />
           <e p="ServerUpdateJob.cs" t="Include" />
         </e>
       </e>

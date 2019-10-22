@@ -47,5 +47,15 @@ public class JobifiedServerBehaviour : MonoBehaviour
             driver = this.m_Driver,
             connections = this.m_Connections
         };
+
+        ServerUpdateJob serverUpdateJob = new ServerUpdateJob
+        {
+            driver = this.m_Driver.ToConcurrent(),
+            connections = this.m_Connections.AsDeferredJobArray()
+        };
+
+        this.ServerJobHandle = this.m_Driver.ScheduleUpdate();
+        this.ServerJobHandle = connectionJob.Schedule(this.ServerJobHandle);
+        this.ServerJobHandle = serverUpdateJob.Schedule(this.m_Connections, 1, this.ServerJobHandle);
     }
 }

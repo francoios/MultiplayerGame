@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using CustomMasterClass;
 using Unity.Collections;
 using Unity.Jobs;
 using Unity.Networking.Transport;
@@ -60,7 +61,7 @@ internal struct ClientUpdateJob : IJob
     }
 }
 
-public class JobifiedClientBehaviour : MonoBehaviour
+public class JobifiedClientBehaviour : AsticotMonoBehaviour
 {
     public UdpNetworkDriver m_Driver;
     public NetworkPipeline m_Pipeline;
@@ -69,9 +70,8 @@ public class JobifiedClientBehaviour : MonoBehaviour
 
     public JobHandle ClientJobHandle;
 
+    public override void Start()
     public bool connectionEstablished;
-
-    private void Start()
     {
         this.m_Driver = new UdpNetworkDriver(new ReliableUtility.Parameters {WindowSize = 32});
         this.m_Pipeline = this.m_Driver.CreatePipeline(typeof(ReliableSequencedPipelineStage));

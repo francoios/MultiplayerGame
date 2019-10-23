@@ -2,54 +2,59 @@
 using Unity.Collections;
 using Unity.Jobs;
 using Unity.Networking.Transport;
+using Unity.Networking.Transport.Utilities;
 using UnityEngine;
 
-struct ClientUpdateJob : IJob
+internal struct ClientUpdateJob : IJob
 {
     public UdpNetworkDriver driver;
+    public NetworkPipeline pipeline;
     public NativeArray<NetworkConnection> connection;
     public NativeArray<byte> done;
 
     public void Execute()
     {
-        if (!connection[0].IsCreated)
+        if (!this.connection[0].IsCreated)
         {
-            if (done[0] != 1)
-                Debug.Log("Something went wrong during connect");
+            if (this.done[0] != 1)
+            {
+                Debug.Log("[CLIENT] Something went wrong during connect");
+            }
+
             return;
         }
 
         DataStreamReader stream;
         NetworkEvent.Type cmd;
 
-        while ((cmd = connection[0].PopEvent(driver, out stream)) !=
+        while ((cmd = this.connection[0].PopEvent(this.driver, out stream)) !=
                NetworkEvent.Type.Empty)
         {
             if (cmd == NetworkEvent.Type.Connect)
             {
-                Debug.Log("We are now connected to the server");
+                Debug.Log("[CLIENT] We are now connected to the server");
 
-                var value = 1;
-                using (var writer = new DataStreamWriter(4, Allocator.Temp))
+                int value = 1;
+                using (DataStreamWriter writer = new DataStreamWriter(4, Allocator.Temp))
                 {
                     writer.Write(value);
-                    connection[0].Send(driver, writer);
+                    this.connection[0].Send(this.driver, this.pipeline, writer);
                 }
             }
             else if (cmd == NetworkEvent.Type.Data)
             {
-                var readerCtx = default(DataStreamReader.Context);
+                DataStreamReader.Context readerCtx = default(DataStreamReader.Context);
                 uint value = stream.ReadUInt(ref readerCtx);
-                Debug.Log("Got the value = " + value + " back from the server");
+                Debug.Log("[CLIENT] Got the value = " + value + " back from the server");
                 // And finally change the `done[0]` to `1`
-                done[0] = 1;
-                connection[0].Disconnect(driver);
-                connection[0] = default(NetworkConnection);
+                this.done[0] = 1;
+                this.connection[0].Disconnect(this.driver);
+                this.connection[0] = default(NetworkConnection);
             }
             else if (cmd == NetworkEvent.Type.Disconnect)
             {
-                Debug.Log("Client got disconnected from server");
-                connection[0] = default(NetworkConnection);
+                Debug.Log("[CLIENT] Client got disconnected from server");
+                this.connection[0] = default(NetworkConnection);
             }
         }
     }
@@ -58,39 +63,42 @@ struct ClientUpdateJob : IJob
 public class JobifiedClientBehaviour : MonoBehaviour
 {
     public UdpNetworkDriver m_Driver;
+    public NetworkPipeline m_Pipeline;
     public NativeArray<NetworkConnection> m_Connection;
     public NativeArray<byte> m_Done;
 
     public JobHandle ClientJobHandle;
 
-    void Start()
+    private void Start()
     {
-        m_Driver = new UdpNetworkDriver(new INetworkParameter[0]);
-
-        m_Connection = new NativeArray<NetworkConnection>(1, Allocator.Persistent);
-        m_Done = new NativeArray<byte>(1, Allocator.Persistent);
-        var endpoint = NetworkEndPoint.Parse(IPAddress.Loopback.ToString(), 9000);
-        m_Connection[0] = m_Driver.Connect(endpoint);
+        this.m_Driver = new UdpNetworkDriver(new ReliableUtility.Parameters {WindowSize = 32});
+        this.m_Pipeline = this.m_Driver.CreatePipeline(typeof(ReliableSequencedPipelineStage));
+        this.m_Connection = new NativeArray<NetworkConnection>(1, Allocator.Persistent);
+        this.m_Done = new NativeArray<byte>(1, Allocator.Persistent);
+        NetworkEndPoint endpoint = NetworkEndPoint.Parse(IPAddress.Loopback.ToString(), 9000);
+        this.m_Connection[0] = this.m_Driver.Connect(endpoint);
     }
 
     public void OnDestroy()
     {
-        ClientJobHandle.Complete();
-        m_Connection.Dispose();
-        m_Driver.Dispose();
-        m_Done.Dispose();
+        this.ClientJobHandle.Complete();
+        this.m_Connection.Dispose();
+        this.m_Driver.Dispose();
+        this.m_Done.Dispose();
     }
 
-    void Update()
+    private void Update()
     {
-        ClientJobHandle.Complete();
-        var job = new ClientUpdateJob
+        this.ClientJobHandle.Complete();
+
+        ClientUpdateJob job = new ClientUpdateJob
         {
-            driver = m_Driver,
-            connection = m_Connection,
-            done = m_Done
+            driver = this.m_Driver,
+            pipeline = this.m_Pipeline,
+            connection = this.m_Connection,
+            done = this.m_Done
         };
-        ClientJobHandle = m_Driver.ScheduleUpdate();
-        ClientJobHandle = job.Schedule(ClientJobHandle);
+        this.ClientJobHandle = this.m_Driver.ScheduleUpdate();
+        this.ClientJobHandle = job.Schedule(this.ClientJobHandle);
     }
 }

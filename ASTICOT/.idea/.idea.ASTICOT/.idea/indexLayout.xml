@@ -10,7 +10,7 @@
       <Path>Library/PackageCache/com.unity.ext.nunit@1.0.0</Path>
       <Path>Library/PackageCache/com.unity.ide.rider@1.1.0</Path>
       <Path>Library/PackageCache/com.unity.ide.vscode@1.1.2</Path>
-      <Path>Library/PackageCache/com.unity.jobs@0.1.1-preview</Path>
+      <Path>Library/PackageCache/com.unity.jobs@0.0.7-preview.5</Path>
       <Path>Library/PackageCache/com.unity.mathematics@1.1.0</Path>
       <Path>Library/PackageCache/com.unity.multiplayer-hlapi@1.0.4</Path>
       <Path>Library/PackageCache/com.unity.properties@0.6.2-preview</Path>
@@ -25,6 +25,7 @@
     <explicitExcludes>
       <Path>.idea</Path>
       <Path>.vs</Path>
+      <Path>Build</Path>
       <Path>Library</Path>
       <Path>Logs</Path>
       <Path>Temp</Path>

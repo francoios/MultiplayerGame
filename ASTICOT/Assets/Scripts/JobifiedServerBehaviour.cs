@@ -1,4 +1,5 @@
 ﻿using CustomMasterClass;
+﻿using System.Linq;
 using Unity.Collections;
 using Unity.Jobs;
 using Unity.Networking.Transport;
@@ -44,6 +45,7 @@ internal struct ServerUpdateJob : IJobParallelFor
 
     public UdpNetworkDriver.Concurrent driver;
     public NativeArray<NetworkConnection> connections;
+
     public NativeArray<uint> number;
 
     public void Execute(int index)
@@ -61,13 +63,13 @@ internal struct ServerUpdateJob : IJobParallelFor
             if (cmd == NetworkEvent.Type.Data)
             {
                 DataStreamReader.Context readerCtx = default(DataStreamReader.Context);
-                this.number[0] += stream.ReadUInt(ref readerCtx);
+                this.number[index] += stream.ReadUInt(ref readerCtx);
 
-                Debug.Log("[SERVER] Got ping from the Client. Now " + this.number[0] + " Clients.");
+                Debug.Log("[SERVER] Got ping from the Client. Now " + this.number[index] + " Clients.");
 
                 using (DataStreamWriter writer = new DataStreamWriter(4, Allocator.Temp))
                 {
-                    writer.Write(this.number[0]);
+                    writer.Write(this.number[index]);
                     this.driver.Send(this.pipeline, this.connections[index], writer);
                 }
             }
@@ -87,11 +89,12 @@ public class JobifiedServerBehaviour : AsticotMonoBehaviour
     public NativeList<NetworkConnection> m_Connections;
     public NativeArray<uint> m_number;
     private JobHandle ServerJobHandle;
+    private uint numberConnectedClient;
 
     public override void Start()
     {
         this.m_Connections = new NativeList<NetworkConnection>(16, Allocator.Persistent);
-        this.m_number = new NativeArray<uint>(1, Allocator.Persistent);
+        this.m_number = new NativeArray<uint>(16, Allocator.Persistent);
         this.m_Driver = new UdpNetworkDriver(new ReliableUtility.Parameters {WindowSize = 32});
         this.m_Pipeline = this.m_Driver.CreatePipeline(typeof(ReliableSequencedPipelineStage));
 
@@ -120,6 +123,9 @@ public class JobifiedServerBehaviour : AsticotMonoBehaviour
     private void Update()
     {
         this.ServerJobHandle.Complete();
+
+        this.numberConnectedClient = (uint)this.m_number.Sum(x => x);
+        //Debug.Log("[SERVER] Connected clients: " + this.numberConnectedClient);
 
         ServerUpdateConnectionsJob connectionJob = new ServerUpdateConnectionsJob
         {

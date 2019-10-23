@@ -69,23 +69,29 @@ public class JobifiedClientBehaviour : AsticotMonoBehaviour
     public NativeArray<byte> m_Done;
 
     public JobHandle ClientJobHandle;
+    public bool connectionEstablished;
 
     public override void Start()
     {
+        
         this.m_Driver = new UdpNetworkDriver(new ReliableUtility.Parameters {WindowSize = 32});
         this.m_Pipeline = this.m_Driver.CreatePipeline(typeof(ReliableSequencedPipelineStage));
         this.m_Connection = new NativeArray<NetworkConnection>(1, Allocator.Persistent);
         this.m_Done = new NativeArray<byte>(1, Allocator.Persistent);
         NetworkEndPoint endpoint = NetworkEndPoint.Parse(IPAddress.Loopback.ToString(), 9000);
         this.m_Connection[0] = this.m_Driver.Connect(endpoint);
+        this.connectionEstablished = true;
     }
 
     public void OnDestroy()
     {
         this.ClientJobHandle.Complete();
-        this.m_Connection.Dispose();
-        this.m_Driver.Dispose();
-        this.m_Done.Dispose();
+        if (this.connectionEstablished)
+        {
+            this.m_Connection.Dispose();
+            this.m_Driver.Dispose();
+            this.m_Done.Dispose();
+        }
     }
 
     private void Update()

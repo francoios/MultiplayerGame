@@ -134,8 +134,8 @@ namespace Unity.Networking.Transport.Utilities
             needsUpdate = needsResume = false;
 
             var dataSize = UnsafeUtility.SizeOf<DelayedPacket>();
-            byte* processBufferPtr = (byte*) ctx.internalProcessBuffer.GetUnsafePtr();
-            var simCtx = (Context*) ctx.internalSharedProcessBuffer.GetUnsafePtr();
+            byte* processBufferPtr = (byte*) ctx.InternalProcessBuffer.GetUnsafePtr();
+            var simCtx = (Context*) ctx.InternalSharedProcessBuffer.GetUnsafePtr();
             int oldestPacketIndex = -1;
             long oldestTime = long.MaxValue;
             int readyPackets = 0;
@@ -178,7 +178,7 @@ namespace Unity.Networking.Transport.Utilities
                 DelayedPacket* packet = (DelayedPacket*) (processBufferPtr + dataSize * oldestPacketIndex);
                 packet->delayUntil = 0;
 
-                delayedPacket = new NativeSlice<byte>(ctx.internalProcessBuffer, packet->processBufferOffset,
+                delayedPacket = new NativeSlice<byte>(ctx.InternalProcessBuffer, packet->processBufferOffset,
                     packet->packetSize);
                 return true;
             }
@@ -193,7 +193,7 @@ namespace Unity.Networking.Transport.Utilities
             // Find empty slot in bookkeeping data space to track this packet
             int packetPayloadOffset = 0;
             int packetDataOffset = 0;
-            var processBufferPtr = (byte*) ctx.internalProcessBuffer.GetUnsafePtr();
+            var processBufferPtr = (byte*) ctx.InternalProcessBuffer.GetUnsafePtr();
             bool foundSlot = GetEmptyDataSlot(processBufferPtr, ref packetPayloadOffset, ref packetDataOffset);
 
             if (!foundSlot)
@@ -203,16 +203,16 @@ namespace Unity.Networking.Transport.Utilities
             }
 
             NativeSlice<byte> packetPayload =
-                new NativeSlice<byte>(ctx.internalProcessBuffer, packetPayloadOffset,
-                    inboundBuffer.buffer1.Length + inboundBuffer.buffer2.Length);
+                new NativeSlice<byte>(ctx.InternalProcessBuffer, packetPayloadOffset,
+                    inboundBuffer.Buffer1.Length + inboundBuffer.Buffer2.Length);
 
-            StorePacketPayload(packetPayload, inboundBuffer.buffer1, inboundBuffer.buffer2);
+            StorePacketPayload(packetPayload, inboundBuffer.Buffer1, inboundBuffer.Buffer2);
 
             // Add tracking for this packet so we can resurrect later
             DelayedPacket packet;
             packet.delayUntil = timestamp + m_PacketDelayMs;
             packet.processBufferOffset = packetPayloadOffset;
-            packet.packetSize = inboundBuffer.buffer1.Length + inboundBuffer.buffer2.Length;
+            packet.packetSize = inboundBuffer.Buffer1.Length + inboundBuffer.Buffer2.Length;
             byte* packetPtr = (byte*) &packet;
             UnsafeUtility.MemCpy(processBufferPtr + packetDataOffset, packetPtr, UnsafeUtility.SizeOf<DelayedPacket>());
 

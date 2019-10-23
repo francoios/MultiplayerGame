@@ -129,7 +129,7 @@ namespace Unity.Networking.Transport
             return length;
         }
 
-        static internal unsafe int SendMessageEx(NativeQueue<IPCQueuedMessage>.Concurrent queue, NetworkEndPoint local,
+        static internal unsafe int SendMessageEx(NativeQueue<IPCQueuedMessage>.ParallelWriter queue, NetworkEndPoint local,
             network_iovec* iov, int iov_len, ref NetworkEndPoint address)
         {
 #if ENABLE_UNITY_COLLECTIONS_CHECKS

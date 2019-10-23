@@ -20,8 +20,8 @@ namespace Unity.Networking.Transport
             var slice = default(NativeSlice<byte>);
             unsafe
             {
-                ReliableUtility.Context* reliable = (ReliableUtility.Context*) ctx.internalProcessBuffer.GetUnsafePtr();
-                ReliableUtility.SharedContext* shared = (ReliableUtility.SharedContext*) ctx.internalSharedProcessBuffer.GetUnsafePtr();
+                ReliableUtility.Context* reliable = (ReliableUtility.Context*) ctx.InternalProcessBuffer.GetUnsafePtr();
+                ReliableUtility.SharedContext* shared = (ReliableUtility.SharedContext*) ctx.InternalSharedProcessBuffer.GetUnsafePtr();
                 shared->errorCode = 0;
                 if (reliable->Resume == ReliableUtility.NullEntry)
                 {
@@ -55,7 +55,7 @@ namespace Unity.Networking.Transport
                         }
                         else
                         {
-                            ReliableUtility.SetPacket(ctx.internalProcessBuffer, result, inboundBuffer.Slice(UnsafeUtility.SizeOf<ReliableUtility.PacketHeader>()));
+                            ReliableUtility.SetPacket(ctx.InternalProcessBuffer, result, inboundBuffer.Slice(UnsafeUtility.SizeOf<ReliableUtility.PacketHeader>()));
                             slice = ReliableUtility.ResumeReceive(ctx, reliable->Delivered + 1, ref needsResume);
                         }
                     }
@@ -76,48 +76,48 @@ namespace Unity.Networking.Transport
             var header = new ReliableUtility.PacketHeader();
             unsafe
             {
-                var reliable = (ReliableUtility.Context*) ctx.internalProcessBuffer.GetUnsafePtr();
+                var reliable = (ReliableUtility.Context*) ctx.InternalProcessBuffer.GetUnsafePtr();
 
                 needsResume = ReliableUtility.ReleaseOrResumePackets(ctx);
 
-                if (inboundBuffer.buffer1.Length > 0)
+                if (inboundBuffer.Buffer1.Length > 0)
                 {
-                    reliable->LastSentTime = ctx.timestamp;
+                    reliable->LastSentTime = ctx.Timestamp;
 
                     ReliableUtility.Write(ctx, inboundBuffer, ref header);
-                    ctx.header.WriteBytes((byte*)&header, UnsafeUtility.SizeOf<ReliableUtility.PacketHeader>());
+                    ctx.Header.WriteBytes((byte*)&header, UnsafeUtility.SizeOf<ReliableUtility.PacketHeader>());
                     if (reliable->Resume != ReliableUtility.NullEntry)
                         needsResume = true;
 
-                    reliable->PreviousTimestamp = ctx.timestamp;
+                    reliable->PreviousTimestamp = ctx.Timestamp;
                     return inboundBuffer;
                 }
 
                 if (reliable->Resume != ReliableUtility.NullEntry)
                 {
-                    reliable->LastSentTime = ctx.timestamp;
+                    reliable->LastSentTime = ctx.Timestamp;
                     var slice = ReliableUtility.ResumeSend(ctx, out header, ref needsResume);
-                    ctx.header.Clear();
-                    ctx.header.WriteBytes((byte*)&header, UnsafeUtility.SizeOf<ReliableUtility.PacketHeader>());
-                    inboundBuffer.buffer1 = slice;
-                    inboundBuffer.buffer2 = default(NativeSlice<byte>);
-                    reliable->PreviousTimestamp = ctx.timestamp;
+                    ctx.Header.Clear();
+                    ctx.Header.WriteBytes((byte*)&header, UnsafeUtility.SizeOf<ReliableUtility.PacketHeader>());
+                    inboundBuffer.Buffer1 = slice;
+                    inboundBuffer.Buffer2 = default(NativeSlice<byte>);
+                    reliable->PreviousTimestamp = ctx.Timestamp;
                     return inboundBuffer;
                 }
 
                 if (ReliableUtility.ShouldSendAck(ctx))
                 {
-                    reliable->LastSentTime = ctx.timestamp;
+                    reliable->LastSentTime = ctx.Timestamp;
 
                     ReliableUtility.WriteAckPacket(ctx, ref header);
-                    ctx.header.WriteBytes((byte*)&header, UnsafeUtility.SizeOf<ReliableUtility.PacketHeader>());
-                    reliable->PreviousTimestamp = ctx.timestamp;
+                    ctx.Header.WriteBytes((byte*)&header, UnsafeUtility.SizeOf<ReliableUtility.PacketHeader>());
+                    reliable->PreviousTimestamp = ctx.Timestamp;
 
                     // TODO: Sending dummy byte over since the pipeline won't send an empty payload (ignored on receive)
-                    inboundBuffer.buffer1 = new NativeSlice<byte>(ctx.internalProcessBuffer, 0, 1);
+                    inboundBuffer.Buffer1 = new NativeSlice<byte>(ctx.InternalProcessBuffer, 0, 1);
                     return inboundBuffer;
                 }
-                reliable->PreviousTimestamp = ctx.timestamp;
+                reliable->PreviousTimestamp = ctx.Timestamp;
                 return inboundBuffer;
             }
         }

@@ -4,7 +4,7 @@ using UnityEngine;
 using Unity.Networking.Transport;
 using Unity.Collections;
 using Unity.Jobs;
-
+/*
 internal struct ClientUpdateJob : IJob
 {
     public UdpNetworkDriver driver;
@@ -57,4 +57,4 @@ internal struct ClientUpdateJob : IJob
             }
         }
     }
-}
+}*/

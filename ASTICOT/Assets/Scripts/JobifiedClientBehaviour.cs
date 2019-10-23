@@ -1,47 +1,96 @@
-﻿using Unity.Collections;
+﻿using System.Net;
+using Unity.Collections;
 using Unity.Jobs;
 using Unity.Networking.Transport;
 using UnityEngine;
+
+struct ClientUpdateJob : IJob
+{
+    public UdpNetworkDriver driver;
+    public NativeArray<NetworkConnection> connection;
+    public NativeArray<byte> done;
+
+    public void Execute()
+    {
+        if (!connection[0].IsCreated)
+        {
+            if (done[0] != 1)
+                Debug.Log("Something went wrong during connect");
+            return;
+        }
+
+        DataStreamReader stream;
+        NetworkEvent.Type cmd;
+
+        while ((cmd = connection[0].PopEvent(driver, out stream)) !=
+               NetworkEvent.Type.Empty)
+        {
+            if (cmd == NetworkEvent.Type.Connect)
+            {
+                Debug.Log("We are now connected to the server");
+
+                var value = 1;
+                using (var writer = new DataStreamWriter(4, Allocator.Temp))
+                {
+                    writer.Write(value);
+                    connection[0].Send(driver, writer);
+                }
+            }
+            else if (cmd == NetworkEvent.Type.Data)
+            {
+                var readerCtx = default(DataStreamReader.Context);
+                uint value = stream.ReadUInt(ref readerCtx);
+                Debug.Log("Got the value = " + value + " back from the server");
+                // And finally change the `done[0]` to `1`
+                done[0] = 1;
+                connection[0].Disconnect(driver);
+                connection[0] = default(NetworkConnection);
+            }
+            else if (cmd == NetworkEvent.Type.Disconnect)
+            {
+                Debug.Log("Client got disconnected from server");
+                connection[0] = default(NetworkConnection);
+            }
+        }
+    }
+}
 
 public class JobifiedClientBehaviour : MonoBehaviour
 {
     public UdpNetworkDriver m_Driver;
     public NativeArray<NetworkConnection> m_Connection;
     public NativeArray<byte> m_Done;
+
     public JobHandle ClientJobHandle;
 
-    // Start is called before the first frame update
-    private void Start()
+    void Start()
     {
-        this.m_Driver = new UdpNetworkDriver(new INetworkParameter[0]);
-        this.m_Connection = new NativeArray<NetworkConnection>(1, Allocator.Persistent);
-        this.m_Done = new NativeArray<byte>(1, Allocator.Persistent);
+        m_Driver = new UdpNetworkDriver(new INetworkParameter[0]);
 
-        NetworkEndPoint endpoint = NetworkEndPoint.Parse("127.0.0.1", 9000);
-        this.m_Connection[0] = this.m_Driver.Connect(endpoint);
+        m_Connection = new NativeArray<NetworkConnection>(1, Allocator.Persistent);
+        m_Done = new NativeArray<byte>(1, Allocator.Persistent);
+        var endpoint = NetworkEndPoint.Parse(IPAddress.Loopback.ToString(), 9000);
+        m_Connection[0] = m_Driver.Connect(endpoint);
     }
 
-    // Update is called once per frame
-    private void Update()
+    public void OnDestroy()
     {
-        this.ClientJobHandle.Complete();
+        ClientJobHandle.Complete();
+        m_Connection.Dispose();
+        m_Driver.Dispose();
+        m_Done.Dispose();
+    }
 
-        ClientUpdateJob job = new ClientUpdateJob
+    void Update()
+    {
+        ClientJobHandle.Complete();
+        var job = new ClientUpdateJob
         {
-            driver = this.m_Driver,
-            connection = this.m_Connection,
-            done = this.m_Done
+            driver = m_Driver,
+            connection = m_Connection,
+            done = m_Done
         };
-        this.ClientJobHandle = this.m_Driver.ScheduleUpdate();
-        this.ClientJobHandle = job.Schedule(this.ClientJobHandle);
-    }
-
-    private void OnDestroy()
-    {
-        this.ClientJobHandle.Complete();
-
-        this.m_Connection.Dispose();
-        this.m_Driver.Dispose();
-        this.m_Done.Dispose();
+        ClientJobHandle = m_Driver.ScheduleUpdate();
+        ClientJobHandle = job.Schedule(ClientJobHandle);
     }
 }

@@ -5,7 +5,7 @@ using Unity.Jobs;
 using Unity.Networking.Transport;
 using UnityEngine;
 using UnityEngine.Assertions;
-
+/*
 internal struct ServerUpdateJob : IJobParallelFor
 {
     public UdpNetworkDriver.Concurrent driver;
@@ -70,4 +70,4 @@ internal struct ServerUpdateConnectionsJob : IJob
             Debug.Log("Accepted a connection");
         }
     }
-}
+}*/

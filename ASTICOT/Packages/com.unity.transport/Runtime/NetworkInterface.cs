@@ -285,7 +285,7 @@ namespace Unity.Networking.Transport
     public struct IPCSocket : INetworkInterface
     {
         [NativeDisableContainerSafetyRestriction] private NativeQueue<IPCManager.IPCQueuedMessage> m_IPCQueue;
-        private NativeQueue<IPCManager.IPCQueuedMessage>.Concurrent m_ConcurrentIPCQueue;
+        private NativeQueue<IPCManager.IPCQueuedMessage>.ParallelWriter m_ConcurrentIPCQueue;
         [ReadOnly] private NativeArray<NetworkEndPoint> m_LocalEndPoint;
 
         public NetworkEndPoint LocalEndPoint => m_LocalEndPoint[0];
@@ -298,7 +298,7 @@ namespace Unity.Networking.Transport
             m_LocalEndPoint = new NativeArray<NetworkEndPoint>(1, Allocator.Persistent);
             m_LocalEndPoint[0] = IPCManager.Instance.CreateEndPoint();
             m_IPCQueue = new NativeQueue<IPCManager.IPCQueuedMessage>(Allocator.Persistent);
-            m_ConcurrentIPCQueue = m_IPCQueue.ToConcurrent();
+            m_ConcurrentIPCQueue = m_IPCQueue.AsParallelWriter();
         }
 
         public void Dispose()

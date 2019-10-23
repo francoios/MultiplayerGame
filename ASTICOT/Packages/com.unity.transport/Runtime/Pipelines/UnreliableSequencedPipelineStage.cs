@@ -15,7 +15,7 @@ namespace Unity.Networking.Transport
             var context = default(DataStreamReader.Context);
             unsafe
             {
-                var oldSequenceId = (int*) ctx.internalProcessBuffer.GetUnsafePtr();
+                var oldSequenceId = (int*) ctx.InternalProcessBuffer.GetUnsafePtr();
                 ushort sequenceId = reader.ReadUShort(ref context);
 
                 if (SequenceHelpers.GreaterThan16(sequenceId, (ushort)*oldSequenceId))
@@ -33,8 +33,8 @@ namespace Unity.Networking.Transport
             needsResume = false;
             unsafe
             {
-                var sequenceId = (int*) ctx.internalProcessBuffer.GetUnsafePtr();
-                ctx.header.Write((ushort)*sequenceId);
+                var sequenceId = (int*) ctx.InternalProcessBuffer.GetUnsafePtr();
+                ctx.Header.Write((ushort)*sequenceId);
                 *sequenceId = (ushort)(*sequenceId + 1);
             }
             return inboundBuffer;

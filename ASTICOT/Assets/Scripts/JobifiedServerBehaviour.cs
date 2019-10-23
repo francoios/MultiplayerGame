@@ -89,9 +89,9 @@ public class JobifiedServerBehaviour : AsticotMonoBehaviour
     public NativeList<NetworkConnection> m_Connections;
     public NativeArray<uint> m_number;
     private JobHandle ServerJobHandle;
+    private uint numberConnectedClient;
 
     public override void Start()
-    private uint numberConnectedClient;
     {
         this.m_Connections = new NativeList<NetworkConnection>(16, Allocator.Persistent);
         this.m_number = new NativeArray<uint>(16, Allocator.Persistent);

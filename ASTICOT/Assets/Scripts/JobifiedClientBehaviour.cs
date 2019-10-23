@@ -69,10 +69,12 @@ public class JobifiedClientBehaviour : AsticotMonoBehaviour
     public NativeArray<byte> m_Done;
 
     public JobHandle ClientJobHandle;
+    public bool connectionEstablished;
+
 
     public override void Start()
-    public bool connectionEstablished;
     {
+        
         this.m_Driver = new UdpNetworkDriver(new ReliableUtility.Parameters {WindowSize = 32});
         this.m_Pipeline = this.m_Driver.CreatePipeline(typeof(ReliableSequencedPipelineStage));
         this.m_Connection = new NativeArray<NetworkConnection>(1, Allocator.Persistent);

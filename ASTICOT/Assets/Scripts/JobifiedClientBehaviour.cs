@@ -18,7 +18,7 @@ internal struct ClientUpdateJob : IJob
         {
             if (this.done[0] != 1)
             {
-                Debug.Log("Something went wrong during connect");
+                Debug.Log("[CLIENT] Something went wrong during connect");
             }
 
             return;
@@ -32,7 +32,7 @@ internal struct ClientUpdateJob : IJob
         {
             if (cmd == NetworkEvent.Type.Connect)
             {
-                Debug.Log("We are now connected to the server");
+                Debug.Log("[CLIENT] We are now connected to the server");
 
                 int value = 1;
                 using (DataStreamWriter writer = new DataStreamWriter(4, Allocator.Temp))
@@ -45,7 +45,7 @@ internal struct ClientUpdateJob : IJob
             {
                 DataStreamReader.Context readerCtx = default(DataStreamReader.Context);
                 uint value = stream.ReadUInt(ref readerCtx);
-                Debug.Log("Got the value = " + value + " back from the server");
+                Debug.Log("[CLIENT] Got the value = " + value + " back from the server");
                 // And finally change the `done[0]` to `1`
                 this.done[0] = 1;
                 this.connection[0].Disconnect(this.driver);
@@ -53,7 +53,7 @@ internal struct ClientUpdateJob : IJob
             }
             else if (cmd == NetworkEvent.Type.Disconnect)
             {
-                Debug.Log("Client got disconnected from server");
+                Debug.Log("[CLIENT] Client got disconnected from server");
                 this.connection[0] = default(NetworkConnection);
             }
         }

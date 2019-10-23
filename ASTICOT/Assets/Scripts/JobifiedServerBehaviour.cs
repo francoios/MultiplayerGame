@@ -27,7 +27,7 @@ internal struct ServerUpdateConnectionsJob : IJob
         while ((c = this.driver.Accept()) != default(NetworkConnection))
         {
             this.connections.Add(c);
-            Debug.Log("Accepted a connection");
+            Debug.Log("[SERVER] Accepted a connection");
         }
     }
 }
@@ -58,7 +58,7 @@ internal struct ServerUpdateJob : IJobParallelFor
                 DataStreamReader.Context readerCtx = default(DataStreamReader.Context);
                 this.number[0] += stream.ReadUInt(ref readerCtx);
 
-                Debug.Log("Got " + this.number[0] + " from the Client. Now " + this.number[0] + " Clients.");
+                Debug.Log("[SERVER] Got ping from the Client. Now " + this.number[0] + " Clients.");
 
                 using (DataStreamWriter writer = new DataStreamWriter(4, Allocator.Temp))
                 {
@@ -68,7 +68,7 @@ internal struct ServerUpdateJob : IJobParallelFor
             }
             else if (cmd == NetworkEvent.Type.Disconnect)
             {
-                Debug.Log("Client disconnected from server");
+                Debug.Log("[SERVER] Client disconnected from server");
                 this.connections[index] = default(NetworkConnection);
             }
         }
@@ -95,7 +95,7 @@ public class JobifiedServerBehaviour : MonoBehaviour
 
         if (this.m_Driver.Bind(endpoint) != 0)
         {
-            Debug.Log("Failed to bind to port 9000");
+            Debug.Log("[SERVER] Failed to bind to port 9000");
         }
         else
         {

@@ -8,6 +8,7 @@ using Unity.Jobs;
 internal struct ClientUpdateJob : IJob
 {
     public UdpNetworkDriver driver;
+    public NetworkPipeline pipeline;
     public NativeArray<NetworkConnection> connection;
     public NativeArray<byte> done;
 
@@ -37,7 +38,7 @@ internal struct ClientUpdateJob : IJob
                 using (DataStreamWriter writer = new DataStreamWriter(4, Allocator.Temp))
                 {
                     writer.Write(value);
-                    this.connection[0].Send(this.driver, writer);
+                    this.connection[0].Send(this.driver, this.pipeline, writer);
                 }
             }
             else if (cmd == NetworkEvent.Type.Data)

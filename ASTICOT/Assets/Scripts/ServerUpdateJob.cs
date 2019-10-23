@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Unity.Collections;
 using Unity.Jobs;
@@ -9,7 +10,11 @@ using UnityEngine.Assertions;
 internal struct ServerUpdateJob : IJobParallelFor
 {
     public UdpNetworkDriver.Concurrent driver;
+
+    [ReadOnly]
+    public NetworkPipeline pipeline;
     public NativeArray<NetworkConnection> connections;
+    public NativeArray<UInt32> number;
 
     public void Execute(int index)
     {
@@ -25,15 +30,14 @@ internal struct ServerUpdateJob : IJobParallelFor
             if (cmd == NetworkEvent.Type.Data)
             {
                 DataStreamReader.Context readerCtx = default(DataStreamReader.Context);
-                uint number = stream.ReadUInt(ref readerCtx);
+                number[0] += stream.ReadUInt(ref readerCtx);
 
-                Debug.Log("Got " + number + " from the Client adding + 2 to it.");
-                number += 2;
+                Debug.Log("Got " + number[0] + " from the Client adding + 1 to it. Now " + this.number[0]);
 
                 using (DataStreamWriter writer = new DataStreamWriter(4, Allocator.Temp))
                 {
-                    writer.Write(number);
-                    this.driver.Send(NetworkPipeline.Null, this.connections[index], writer);
+                    writer.Write(number[0]);
+                    this.driver.Send(this.pipeline, this.connections[index], writer);
                 }
             }
             else if (cmd == NetworkEvent.Type.Disconnect)

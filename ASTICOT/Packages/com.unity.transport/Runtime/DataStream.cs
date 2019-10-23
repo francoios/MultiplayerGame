@@ -702,7 +702,7 @@ namespace Unity.Networking.Transport
                 throw new System.ArgumentOutOfRangeException();
             m_Safety = writer.m_Safety;
             AtomicSafetyHandle.UseSecondaryVersion(ref m_Safety);
-            AtomicSafetyHandle.SetAllowSecondaryVersionWriting(m_Safety, false);
+            //AtomicSafetyHandle.SetAllowSecondaryVersionWriting(m_Safety, false);
 #endif
             m_bufferPtr = writer.GetUnsafeReadOnlyPtr() + offset;
             m_Length = length;

@@ -71,6 +71,7 @@ public class JobifiedClientBehaviour : AsticotMonoBehaviour
     public JobHandle ClientJobHandle;
     public bool connectionEstablished;
 
+
     public override void Start()
     {
         

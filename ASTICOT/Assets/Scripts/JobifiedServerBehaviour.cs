@@ -1,4 +1,5 @@
-﻿using Unity.Collections;
+﻿using CustomMasterClass;
+using Unity.Collections;
 using Unity.Jobs;
 using Unity.Networking.Transport;
 using Unity.Networking.Transport.Utilities;
@@ -27,6 +28,10 @@ internal struct ServerUpdateConnectionsJob : IJob
         while ((c = this.driver.Accept()) != default(NetworkConnection))
         {
             this.connections.Add(c);
+            ClientConnectionMsg msg = new ClientConnectionMsg();
+            msg.ClientInfo = c;
+            Debug.Log("c.id === " +  c.InternalId);
+            EventManager.TriggerEvent(GameHandlerData.PlayerJoinedServerHandler, msg);
             Debug.Log("[SERVER] Accepted a connection");
         }
     }
@@ -75,7 +80,7 @@ internal struct ServerUpdateJob : IJobParallelFor
     }
 }
 
-public class JobifiedServerBehaviour : MonoBehaviour
+public class JobifiedServerBehaviour : AsticotMonoBehaviour
 {
     public UdpNetworkDriver m_Driver;
     public NetworkPipeline m_Pipeline;
@@ -83,7 +88,7 @@ public class JobifiedServerBehaviour : MonoBehaviour
     public NativeArray<uint> m_number;
     private JobHandle ServerJobHandle;
 
-    private void Start()
+    public override void Start()
     {
         this.m_Connections = new NativeList<NetworkConnection>(16, Allocator.Persistent);
         this.m_number = new NativeArray<uint>(1, Allocator.Persistent);

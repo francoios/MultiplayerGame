@@ -22,7 +22,7 @@ namespace Unity.Networking.Transport.Tests
 
         public InboundBufferVec Send(NetworkPipelineContext ctx, InboundBufferVec inboundBuffer, ref bool needsResume, ref bool needsUpdate)
         {
-            ctx.header.Write((int) 1);
+            ctx.Header.Write((int) 1);
             return inboundBuffer;
         }
 
@@ -49,7 +49,7 @@ namespace Unity.Networking.Transport.Tests
 
         public InboundBufferVec Send(NetworkPipelineContext ctx, InboundBufferVec inboundBuffer, ref bool needsResume, ref bool needsUpdate)
         {
-            ctx.header.Write((int) 2);
+            ctx.Header.Write((int) 2);
             return inboundBuffer;
         }
 
@@ -70,20 +70,20 @@ namespace Unity.Networking.Transport.Tests
         public NativeSlice<byte> Receive(NetworkPipelineContext ctx, NativeSlice<byte> inboundBuffer, ref bool needsResume, ref bool needsUpdate, ref bool needsSendUpdate)
         {
             for (int i = 0; i < inboundBuffer.Length; ++i)
-                ctx.internalProcessBuffer[i] = (byte)(inboundBuffer[i] ^ 0xff);
-            return new NativeSlice<byte>(ctx.internalProcessBuffer, 0, inboundBuffer.Length);
+                ctx.InternalProcessBuffer[i] = (byte)(inboundBuffer[i] ^ 0xff);
+            return new NativeSlice<byte>(ctx.InternalProcessBuffer, 0, inboundBuffer.Length);
         }
 
         public InboundBufferVec Send(NetworkPipelineContext ctx, InboundBufferVec inboundBuffer, ref bool needsResume, ref bool needsUpdate)
         {
-            var len1 = inboundBuffer.buffer1.Length;
-            var len2 = inboundBuffer.buffer2.Length;
+            var len1 = inboundBuffer.Buffer1.Length;
+            var len2 = inboundBuffer.Buffer2.Length;
             for (int i = 0; i < len1; ++i)
-                ctx.internalProcessBuffer[i] = (byte)(inboundBuffer.buffer1[i] ^ 0xff);
+                ctx.InternalProcessBuffer[i] = (byte)(inboundBuffer.Buffer1[i] ^ 0xff);
             for (int i = 0; i < len2; ++i)
-                ctx.internalProcessBuffer[len1+i] = (byte)(inboundBuffer.buffer2[i] ^ 0xff);
+                ctx.InternalProcessBuffer[len1+i] = (byte)(inboundBuffer.Buffer2[i] ^ 0xff);
             var nextInbound = default(InboundBufferVec);
-            nextInbound.buffer1 =  new NativeSlice<byte>(ctx.internalProcessBuffer, 0, len1+len2);
+            nextInbound.Buffer1 =  new NativeSlice<byte>(ctx.InternalProcessBuffer, 0, len1+len2);
             return nextInbound;
         }
 
@@ -107,14 +107,14 @@ namespace Unity.Networking.Transport.Tests
 
         public InboundBufferVec Send(NetworkPipelineContext ctx, InboundBufferVec inboundBuffer, ref bool needsResume, ref bool needsUpdate)
         {
-            var len1 = inboundBuffer.buffer1.Length;
-            var len2 = inboundBuffer.buffer2.Length;
+            var len1 = inboundBuffer.Buffer1.Length;
+            var len2 = inboundBuffer.Buffer2.Length;
             for (int i = 0; i < len1; ++i)
-                ctx.internalProcessBuffer[i] = (byte)(inboundBuffer.buffer1[i] ^ 0xff);
+                ctx.InternalProcessBuffer[i] = (byte)(inboundBuffer.Buffer1[i] ^ 0xff);
             for (int i = 0; i < len2; ++i)
-                ctx.internalProcessBuffer[len1+i] = (byte)(inboundBuffer.buffer2[i] ^ 0xff);
+                ctx.InternalProcessBuffer[len1+i] = (byte)(inboundBuffer.Buffer2[i] ^ 0xff);
             var nextInbound = default(InboundBufferVec);
-            nextInbound.buffer1 =  new NativeSlice<byte>(ctx.internalProcessBuffer, 0, len1+len2);
+            nextInbound.Buffer1 =  new NativeSlice<byte>(ctx.InternalProcessBuffer, 0, len1+len2);
             return nextInbound;
         }
 
@@ -136,14 +136,14 @@ namespace Unity.Networking.Transport.Tests
 
         public unsafe InboundBufferVec Send(NetworkPipelineContext ctx, InboundBufferVec inboundBuffer, ref bool needsResume, ref bool needsUpdate)
         {
-            var len1 = inboundBuffer.buffer1.Length;
-            var len2 = inboundBuffer.buffer2.Length;
+            var len1 = inboundBuffer.Buffer1.Length;
+            var len2 = inboundBuffer.Buffer2.Length;
             for (int i = 0; i < len1; ++i)
-                ctx.internalProcessBuffer[i] = (byte)(inboundBuffer.buffer1[i] ^ 0xff);
+                ctx.InternalProcessBuffer[i] = (byte)(inboundBuffer.Buffer1[i] ^ 0xff);
             for (int i = 0; i < len2; ++i)
-                ctx.internalProcessBuffer[len1+i] = (byte)(inboundBuffer.buffer2[i] ^ 0xff);
+                ctx.InternalProcessBuffer[len1+i] = (byte)(inboundBuffer.Buffer2[i] ^ 0xff);
             var nextInbound = default(InboundBufferVec);
-            nextInbound.buffer1 =  new NativeSlice<byte>(ctx.internalProcessBuffer, 0, len1+len2);
+            nextInbound.Buffer1 =  new NativeSlice<byte>(ctx.InternalProcessBuffer, 0, len1+len2);
             return nextInbound;
         }
 
@@ -161,13 +161,13 @@ namespace Unity.Networking.Transport.Tests
     {
         public NativeSlice<byte> Receive(NetworkPipelineContext ctx, NativeSlice<byte> inboundBuffer, ref bool needsResume, ref bool needsUpdate, ref bool needsSendUpdate)
         {
-            var receiveData = (int*)ctx.internalProcessBuffer.GetUnsafePtr();
+            var receiveData = (int*)ctx.InternalProcessBuffer.GetUnsafePtr();
             for (int i = 4; i <= 6; ++i)
             {
                 Assert.AreEqual(*receiveData, i);
                 receiveData++;
             }
-            var sharedData = (int*)ctx.internalSharedProcessBuffer.GetUnsafePtr();
+            var sharedData = (int*)ctx.InternalSharedProcessBuffer.GetUnsafePtr();
             for (int i = 7; i <= 8; ++i)
             {
                 Assert.AreEqual(*sharedData, i);
@@ -178,13 +178,13 @@ namespace Unity.Networking.Transport.Tests
 
         public unsafe InboundBufferVec Send(NetworkPipelineContext ctx, InboundBufferVec inboundBuffer, ref bool needsResume, ref bool needsUpdate)
         {
-            var sendData = (int*)ctx.internalProcessBuffer.GetUnsafePtr();
+            var sendData = (int*)ctx.InternalProcessBuffer.GetUnsafePtr();
             for (int i = 1; i <= 3; ++i)
             {
                 Assert.AreEqual(*sendData, i);
                 sendData++;
             }
-            var sharedData = (int*)ctx.internalSharedProcessBuffer.GetUnsafePtr();
+            var sharedData = (int*)ctx.InternalSharedProcessBuffer.GetUnsafePtr();
             for (int i = 7; i <= 8; ++i)
             {
                 Assert.AreEqual(*sharedData, i);
@@ -225,13 +225,13 @@ namespace Unity.Networking.Transport.Tests
     {
         public NativeSlice<byte> Receive(NetworkPipelineContext ctx, NativeSlice<byte> inboundBuffer, ref bool needsResume, ref bool needsUpdate, ref bool needsSendUpdate)
         {
-            var receiveData = (int*)ctx.internalProcessBuffer.GetUnsafePtr();
+            var receiveData = (int*)ctx.InternalProcessBuffer.GetUnsafePtr();
             for (int i = 4; i <= 6; ++i)
             {
                 Assert.AreEqual(*receiveData, i*10);
                 receiveData++;
             }
-            var sharedData = (int*)ctx.internalSharedProcessBuffer.GetUnsafePtr();
+            var sharedData = (int*)ctx.InternalSharedProcessBuffer.GetUnsafePtr();
             for (int i = 7; i <= 8; ++i)
             {
                 Assert.AreEqual(*sharedData, i*10);
@@ -242,13 +242,13 @@ namespace Unity.Networking.Transport.Tests
 
         public unsafe InboundBufferVec Send(NetworkPipelineContext ctx, InboundBufferVec inboundBuffer, ref bool needsResume, ref bool needsUpdate)
         {
-            var sendData = (int*)ctx.internalProcessBuffer.GetUnsafePtr();
+            var sendData = (int*)ctx.InternalProcessBuffer.GetUnsafePtr();
             for (int i = 1; i <= 3; ++i)
             {
                 Assert.AreEqual(*sendData, i*10);
                 sendData++;
             }
-            var sharedData = (int*)ctx.internalSharedProcessBuffer.GetUnsafePtr();
+            var sharedData = (int*)ctx.InternalSharedProcessBuffer.GetUnsafePtr();
             for (int i = 7; i <= 8; ++i)
             {
                 Assert.AreEqual(*sharedData, i*10);

@@ -18,15 +18,15 @@ namespace Unity.Networking.Transport
 
     public struct InboundBufferVec
     {
-        public NativeSlice<byte> buffer1;
-        public NativeSlice<byte> buffer2;
+        public NativeSlice<byte> Buffer1;
+        public NativeSlice<byte> Buffer2;
     }
     public struct NetworkPipelineContext
     {
-        public NativeSlice<byte> internalSharedProcessBuffer;
-        public NativeSlice<byte> internalProcessBuffer;
-        public DataStreamWriter header;
-        public long timestamp;
+        public NativeSlice<byte> InternalSharedProcessBuffer;
+        public NativeSlice<byte> InternalProcessBuffer;
+        public DataStreamWriter Header;
+        public long Timestamp;
     }
 
     public class NetworkPipelineInitilizeAttribute : Attribute
@@ -112,7 +112,7 @@ namespace Unity.Networking.Transport
                 m_StageCollection = m_StageCollection,
                 m_Pipelines = m_Pipelines,
                 m_StageList = m_StageList,
-                m_SendStageNeedsUpdateWrite = m_SendStageNeedsUpdateRead.ToConcurrent(),
+                m_SendStageNeedsUpdateWrite = m_SendStageNeedsUpdateRead.AsParallelWriter(),
                 sizePerConnection = sizePerConnection,
                 sendBuffer = m_SendBuffer,
                 sharedBuffer = m_SharedBuffer,
@@ -126,7 +126,7 @@ namespace Unity.Networking.Transport
             internal TNetworkPipelineStageCollection m_StageCollection;
             [ReadOnly] internal NativeList<PipelineImpl> m_Pipelines;
             [ReadOnly] internal NativeList<int> m_StageList;
-            internal NativeQueue<UpdatePipeline>.Concurrent m_SendStageNeedsUpdateWrite;
+            internal NativeQueue<UpdatePipeline>.ParallelWriter m_SendStageNeedsUpdateWrite;
             [ReadOnly] internal NativeArray<int> sizePerConnection;
             // TODO: not really read-only, just hacking the safety system
             [ReadOnly] internal NativeList<byte> sharedBuffer;
@@ -166,16 +166,16 @@ namespace Unity.Networking.Transport
                 NativeSlice<byte> payloadBuffer, NativeList<UpdatePipeline> currentUpdates) where T : struct, INetworkPipelineSender
             {
                 NetworkPipelineContext ctx = default(NetworkPipelineContext);
-                ctx.timestamp = m_timestamp[0];
+                ctx.Timestamp = m_timestamp[0];
                 var p = m_Pipelines[pipeline.Id-1];
                 var connectionId = connection.m_NetworkId;
 
                 var resumeQ = new NativeList<int>(16, Allocator.Temp);
                 int resumeQStart = 0;
-                ctx.header = new DataStreamWriter(p.headerCapacity, Allocator.Temp);
+                ctx.Header = new DataStreamWriter(p.headerCapacity, Allocator.Temp);
 
                 var inboundBuffer = default(InboundBufferVec);
-                inboundBuffer.buffer1 = payloadBuffer;
+                inboundBuffer.Buffer1 = payloadBuffer;
 
                 var prevHeader = new DataStreamWriter(p.headerCapacity, Allocator.Temp);
 
@@ -199,65 +199,65 @@ namespace Unity.Networking.Transport
                     {
                         var prevInbound = inboundBuffer;
                         ProcessSendStage(i, internalBufferOffset, internalSharedBufferOffset, p, ref resumeQ, ref ctx, ref inboundBuffer, ref needsUpdate);
-                        if (inboundBuffer.buffer1 == prevInbound.buffer1 &&
-                            inboundBuffer.buffer2 == prevInbound.buffer2)
+                        if (inboundBuffer.Buffer1 == prevInbound.Buffer1 &&
+                            inboundBuffer.Buffer2 == prevInbound.Buffer2)
                         {
-                            if (ctx.header.Length > 0)
+                            if (ctx.Header.Length > 0)
                             {
                                 if (prevHeader.Length > 0)
-                                    ctx.header.WriteBytes(prevHeader.GetUnsafeReadOnlyPtr(), prevHeader.Length);
+                                    ctx.Header.WriteBytes(prevHeader.GetUnsafeReadOnlyPtr(), prevHeader.Length);
                                 prevHeader.Clear();
-                                var tempHeader = ctx.header;
-                                ctx.header = prevHeader;
+                                var tempHeader = ctx.Header;
+                                ctx.Header = prevHeader;
                                 prevHeader = tempHeader;
-                                if (inboundBuffer.buffer2.Length == 0)
-                                    inboundBuffer.buffer2 = inboundBuffer.buffer1;
-                                inboundBuffer.buffer1 = prevHeader.GetNativeSlice(0, prevHeader.Length);
+                                if (inboundBuffer.Buffer2.Length == 0)
+                                    inboundBuffer.Buffer2 = inboundBuffer.Buffer1;
+                                inboundBuffer.Buffer1 = prevHeader.GetNativeSlice(0, prevHeader.Length);
                             }
 
                         }
                         else
                         {
 #if ENABLE_UNITY_COLLECTIONS_CHECKS
-                            if (inboundBuffer.buffer2.Length > 0)
+                            if (inboundBuffer.Buffer2.Length > 0)
                                 throw new InvalidOperationException("Pipeline send stages must return either the unmodified inbound buffers or a consolidated version with a single buffer");
 #endif
                             // Prev header is now part of payload
                             prevHeader.Clear();
-                            if (ctx.header.Length > 0)
+                            if (ctx.Header.Length > 0)
                             {
-                                var tempHeader = ctx.header;
-                                ctx.header = prevHeader;
+                                var tempHeader = ctx.Header;
+                                ctx.Header = prevHeader;
                                 prevHeader = tempHeader;
-                                inboundBuffer.buffer2 = inboundBuffer.buffer1;
-                                inboundBuffer.buffer1 = prevHeader.GetNativeSlice(0, prevHeader.Length);
+                                inboundBuffer.Buffer2 = inboundBuffer.Buffer1;
+                                inboundBuffer.Buffer1 = prevHeader.GetNativeSlice(0, prevHeader.Length);
                             }
                         }
                         if (needsUpdate)
                             AddSendUpdate(connection, i, pipeline, currentUpdates);
-                        if (inboundBuffer.buffer1.Length == 0)
+                        if (inboundBuffer.Buffer1.Length == 0)
                             break;
 
                         needsUpdate = false;
 
-                        internalBufferOffset += ctx.internalProcessBuffer.Length;
-                        internalSharedBufferOffset += ctx.internalSharedProcessBuffer.Length;
+                        internalBufferOffset += ctx.InternalProcessBuffer.Length;
+                        internalSharedBufferOffset += ctx.InternalSharedProcessBuffer.Length;
                     }
 
-                    if (inboundBuffer.buffer1.Length != 0)
+                    if (inboundBuffer.Buffer1.Length != 0)
                     {
                         var iov = stackalloc network_iovec[4];
                         var pipelineId = pipeline.Id;
                         iov[0].buf = &pipelineId;
                         iov[0].len = 1;
-                        iov[1].buf = ctx.header.GetUnsafePtr();
-                        iov[1].len = ctx.header.Length;
-                        iov[2].buf = inboundBuffer.buffer1.GetUnsafeReadOnlyPtr();
-                        iov[2].len = inboundBuffer.buffer1.Length;
-                        if (inboundBuffer.buffer2.Length > 0)
+                        iov[1].buf = ctx.Header.GetUnsafePtr();
+                        iov[1].len = ctx.Header.Length;
+                        iov[2].buf = inboundBuffer.Buffer1.GetUnsafeReadOnlyPtr();
+                        iov[2].len = inboundBuffer.Buffer1.Length;
+                        if (inboundBuffer.Buffer2.Length > 0)
                         {
-                            iov[3].buf = inboundBuffer.buffer2.GetUnsafeReadOnlyPtr();
-                            iov[3].len = inboundBuffer.buffer2.Length;
+                            iov[3].buf = inboundBuffer.Buffer2.GetUnsafeReadOnlyPtr();
+                            iov[3].len = inboundBuffer.Buffer2.Length;
                             // FIXME: handle send errors
                             driver.Send(connection, iov, 4);
                         }
@@ -295,10 +295,10 @@ namespace Unity.Networking.Transport
                 PipelineImpl p, ref NativeList<int> resumeQ, ref NetworkPipelineContext ctx, ref InboundBufferVec inboundBuffer, ref bool needsUpdate)
             {
                 bool needsResume = false;
-                ctx.internalProcessBuffer = Unsafe_GetSliceFromReadOnlyArray(sendBuffer, internalBufferOffset,
+                ctx.InternalProcessBuffer = Unsafe_GetSliceFromReadOnlyArray(sendBuffer, internalBufferOffset,
                     m_StageCollection.GetSendCapacity(m_StageList[p.FirstStageIndex + startStage]));
 
-                ctx.internalSharedProcessBuffer =
+                ctx.InternalSharedProcessBuffer =
                     Unsafe_GetSliceFromReadOnlyArray(sharedBuffer, internalSharedBufferOffset,
                         m_StageCollection.GetSharedStateCapacity(m_StageList[p.FirstStageIndex + startStage]));
 
@@ -630,9 +630,9 @@ namespace Unity.Networking.Transport
             int resumeQStart = 0;
 
             NetworkPipelineContext ctx = default(NetworkPipelineContext);
-            ctx.timestamp = Timestamp;
+            ctx.Timestamp = Timestamp;
             var inboundBuffer = new NativeSlice<byte>(buffer, 0, buffer.Length);
-            ctx.header = default(DataStreamWriter);
+            ctx.Header = default(DataStreamWriter);
             NativeList<UpdatePipeline> sendUpdates = new NativeList<UpdatePipeline>(128, Allocator.Temp);
 
             while (true)
@@ -704,9 +704,9 @@ namespace Unity.Networking.Transport
             bool needsResume = false;
             var p = m_Pipelines[pipeline.Id-1];
 
-            ctx.internalProcessBuffer =
+            ctx.InternalProcessBuffer =
                 new NativeSlice<byte>(m_ReceiveBuffer, internalBufferOffset, m_StageCollection.GetReceiveCapacity(m_StageList[p.FirstStageIndex+stage]));
-            ctx.internalSharedProcessBuffer =
+            ctx.InternalSharedProcessBuffer =
                 new NativeSlice<byte>(m_SharedBuffer, internalSharedBufferOffset, m_StageCollection.GetSharedStateCapacity(m_StageList[p.FirstStageIndex+stage]));
             var stageId = m_StageList[p.FirstStageIndex + stage];
             inboundBuffer = m_StageCollection.InvokeReceive(stageId, ctx, inboundBuffer, ref needsResume, ref needsUpdate, ref needsSendUpdate);

@@ -5,6 +5,71 @@ using Unity.Collections;
 using Unity.Jobs;
 using Unity.Networking.Transport;
 using UnityEngine;
+using UnityEngine.Assertions;
+
+struct ServerUpdateConnectionsJob : IJob
+{
+    public UdpNetworkDriver driver;
+    public NativeList<NetworkConnection> connections;
+
+    public void Execute()
+    {
+        // CleanUpConnections
+        for (int i = 0; i < connections.Length; i++)
+        {
+            if (!connections[i].IsCreated)
+            {
+                connections.RemoveAtSwapBack(i);
+                --i;
+            }
+        }
+        // AcceptNewConnections
+        NetworkConnection c;
+        while ((c = driver.Accept()) != default(NetworkConnection))
+        {
+            connections.Add(c);
+            Debug.Log("Accepted a connection");
+        }
+    }
+}
+
+struct ServerUpdateJob : IJobParallelFor
+{
+    public UdpNetworkDriver.Concurrent driver;
+    public NativeArray<NetworkConnection> connections;
+
+    public void Execute(int index)
+    {
+        DataStreamReader stream;
+        if (!connections[index].IsCreated)
+            Assert.IsTrue(true);
+
+        NetworkEvent.Type cmd;
+        while ((cmd = driver.PopEventForConnection(connections[index], out stream)) !=
+               NetworkEvent.Type.Empty)
+        {
+            if (cmd == NetworkEvent.Type.Data)
+            {
+                var readerCtx = default(DataStreamReader.Context);
+                uint number = stream.ReadUInt(ref readerCtx);
+
+                Debug.Log("Got " + number + " from the Client adding + 2 to it.");
+                number += 2;
+
+                using (var writer = new DataStreamWriter(4, Allocator.Temp))
+                {
+                    writer.Write(number);
+                    driver.Send(NetworkPipeline.Null, connections[index], writer);
+                }
+            }
+            else if (cmd == NetworkEvent.Type.Disconnect)
+            {
+                Debug.Log("Client disconnected from server");
+                connections[index] = default(NetworkConnection);
+            }
+        }
+    }
+}
 
 public class JobifiedServerBehaviour : MonoBehaviour
 {
@@ -12,50 +77,42 @@ public class JobifiedServerBehaviour : MonoBehaviour
     public NativeList<NetworkConnection> m_Connections;
     private JobHandle ServerJobHandle;
 
-    private void Start()
+    void Start()
     {
-        this.m_Connections = new NativeList<NetworkConnection>(16, Allocator.Persistent);
-        this.m_Driver = new UdpNetworkDriver(new INetworkParameter[0]);
-
-        NetworkEndPoint endpoint = NetworkEndPoint.AnyIpv4;
-        endpoint.Port = 9000;
-
-        if (this.m_Driver.Bind(endpoint) != 0)
-        {
+        m_Connections = new NativeList<NetworkConnection>(16, Allocator.Persistent);
+        m_Driver = new UdpNetworkDriver(new INetworkParameter[0]);
+        if (m_Driver.Bind(NetworkEndPoint.Parse(IPAddress.Any.ToString(), 9000)) != 0)
             Debug.Log("Failed to bind to port 9000");
-        }
         else
-        {
-            this.m_Driver.Listen();
-        }
+            m_Driver.Listen();
     }
 
     public void OnDestroy()
     {
         // Make sure we run our jobs to completion before exiting.
-        this.ServerJobHandle.Complete();
-        this.m_Connections.Dispose();
-        this.m_Driver.Dispose();
+        ServerJobHandle.Complete();
+        m_Connections.Dispose();
+        m_Driver.Dispose();
     }
 
-    private void Update()
+    void Update()
     {
-        this.ServerJobHandle.Complete();
+        ServerJobHandle.Complete();
 
-        ServerUpdateConnectionsJob connectionJob = new ServerUpdateConnectionsJob
+        var connectionJob = new ServerUpdateConnectionsJob
         {
-            driver = this.m_Driver,
-            connections = this.m_Connections
+            driver = m_Driver,
+            connections = m_Connections
         };
 
-        ServerUpdateJob serverUpdateJob = new ServerUpdateJob
+        var serverUpdateJob = new ServerUpdateJob
         {
-            driver = this.m_Driver.ToConcurrent(),
-            connections = this.m_Connections.AsDeferredJobArray()
+            driver = m_Driver.ToConcurrent(),
+            connections = m_Connections.AsDeferredJobArray()
         };
 
-        this.ServerJobHandle = this.m_Driver.ScheduleUpdate();
-        this.ServerJobHandle = connectionJob.Schedule(this.ServerJobHandle);
-        this.ServerJobHandle = serverUpdateJob.Schedule(this.m_Connections, 1, this.ServerJobHandle);
+        ServerJobHandle = m_Driver.ScheduleUpdate();
+        ServerJobHandle = connectionJob.Schedule(ServerJobHandle);
+        ServerJobHandle = serverUpdateJob.Schedule(m_Connections, 1, ServerJobHandle);
     }
 }

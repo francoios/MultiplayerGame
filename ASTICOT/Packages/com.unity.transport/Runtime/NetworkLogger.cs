@@ -181,7 +181,7 @@ namespace Unity.Networking.Transport
         public Concurrent ToConcurrent()
         {
             var concurrent = default(Concurrent);
-            concurrent.m_PendingLog = m_PendingLog.ToConcurrent();
+            concurrent.MPendingLog = m_PendingLog.AsParallelWriter();
             concurrent.m_Level = m_Level;
             return concurrent;
         }
@@ -195,17 +195,17 @@ namespace Unity.Networking.Transport
                 var msg = default(LogMessage);
                 msg.level = level;
                 message.Print(ref msg.msg);
-                m_PendingLog.Enqueue(msg);
+                MPendingLog.Enqueue(msg);
             }
             public void Log(LogLevel level, NetworkLogString str)
             {
                 if ((int) level > (int) m_Level)
                     return;
                 var msg = new LogMessage {level = level, msg = str};
-                m_PendingLog.Enqueue(msg);
+                MPendingLog.Enqueue(msg);
             }
 
-            internal NativeQueue<LogMessage>.Concurrent m_PendingLog;
+            internal NativeQueue<LogMessage>.ParallelWriter MPendingLog;
             internal LogLevel m_Level;
         }
     }

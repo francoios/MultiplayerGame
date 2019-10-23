@@ -17,7 +17,7 @@ namespace Unity.Networking.Transport
 
         public unsafe NativeSlice<byte> Receive(NetworkPipelineContext ctx, NativeSlice<byte> inboundBuffer, ref bool needsResume, ref bool needsUpdate, ref bool needsSendUpdate)
         {
-            var param = (SimulatorUtility.Context*) ctx.internalSharedProcessBuffer.GetUnsafePtr();
+            var param = (SimulatorUtility.Context*) ctx.InternalSharedProcessBuffer.GetUnsafePtr();
             var simulator = new SimulatorUtility(m_SimulatorParams.MaxPacketCount, m_SimulatorParams.MaxPacketSize, m_SimulatorParams.PacketDelayMs);
             if (inboundBuffer.Length > m_SimulatorParams.MaxPacketSize)
             {
@@ -26,7 +26,7 @@ namespace Unity.Networking.Transport
                 return inboundBuffer;
             }
 
-            var timestamp = ctx.timestamp;
+            var timestamp = ctx.Timestamp;
 
             if (inboundBuffer.Length > 0)
                 param->PacketCount++;
@@ -37,7 +37,7 @@ namespace Unity.Networking.Transport
             if (delayPacket && inboundBuffer.Length > 0)
             {
                 var bufferVec = default(InboundBufferVec);
-                bufferVec.buffer1 = inboundBuffer;
+                bufferVec.Buffer1 = inboundBuffer;
                 if (!simulator.DelayPacket(ref ctx, bufferVec, ref needsUpdate, timestamp))
                 {
                     return inboundBuffer;
@@ -97,19 +97,19 @@ namespace Unity.Networking.Transport
         public InboundBufferVec Send(NetworkPipelineContext ctx, InboundBufferVec inboundBuffer, ref bool needsResume, ref bool needsUpdate)
         {
             var simulator = new SimulatorUtility(m_SimulatorParams.MaxPacketCount, m_SimulatorParams.MaxPacketSize, m_SimulatorParams.PacketDelayMs);
-            if (inboundBuffer.buffer1.Length+inboundBuffer.buffer2.Length > m_SimulatorParams.MaxPacketSize)
+            if (inboundBuffer.Buffer1.Length+inboundBuffer.Buffer2.Length > m_SimulatorParams.MaxPacketSize)
             {
                 //UnityEngine.Debug.LogWarning("Incoming packet too large for internal storage buffer. Passing through. [buffer=" + (inboundBuffer.buffer1.Length+inboundBuffer.buffer2.Length) + " packet=" + param->MaxPacketSize + "]");
                 return inboundBuffer;
             }
 
-            var timestamp = ctx.timestamp;
+            var timestamp = ctx.Timestamp;
 
             // Packet always delayed atm
             bool delayPacket = true;
 
             // Inbound buffer is empty if this is a resumed receive
-            if (delayPacket && inboundBuffer.buffer1.Length > 0)
+            if (delayPacket && inboundBuffer.Buffer1.Length > 0)
             {
                 if (!simulator.DelayPacket(ref ctx, inboundBuffer, ref needsUpdate, timestamp))
                 {
@@ -120,8 +120,8 @@ namespace Unity.Networking.Transport
             NativeSlice<byte> returnPacket = default(NativeSlice<byte>);
             if (simulator.GetDelayedPacket(ref ctx, ref returnPacket, ref needsResume, ref needsUpdate, timestamp))
             {
-                inboundBuffer.buffer1 = returnPacket;
-                inboundBuffer.buffer2 = default(NativeSlice<byte>);
+                inboundBuffer.Buffer1 = returnPacket;
+                inboundBuffer.Buffer2 = default(NativeSlice<byte>);
                 return inboundBuffer;
             }
 

@@ -27,8 +27,7 @@ internal struct ClientUpdateJob : IJob
         DataStreamReader stream;
         NetworkEvent.Type cmd;
 
-        while ((cmd = this.connection[0].PopEvent(this.driver, out stream)) !=
-               NetworkEvent.Type.Empty)
+        while ((cmd = this.connection[0].PopEvent(this.driver, out stream)) != NetworkEvent.Type.Empty)
         {
             if (cmd == NetworkEvent.Type.Connect)
             {

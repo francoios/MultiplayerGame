@@ -20,8 +20,7 @@ internal struct ServerUpdateJob : IJobParallelFor
         }
 
         NetworkEvent.Type cmd;
-        while ((cmd = this.driver.PopEventForConnection(this.connections[index], out stream)) !=
-               NetworkEvent.Type.Empty)
+        while ((cmd = this.driver.PopEventForConnection(this.connections[index], out stream)) != NetworkEvent.Type.Empty)
         {
             if (cmd == NetworkEvent.Type.Data)
             {

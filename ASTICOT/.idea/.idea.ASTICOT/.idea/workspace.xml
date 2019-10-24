@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="78bd6dd1-da32-4688-831b-1c9bd9fc6a9a" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.ASTICOT/.idea/indexLayout.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ASTICOT/.idea/indexLayout.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.ASTICOT/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ASTICOT/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ProjectSettings/ProjectSettings.asset" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectSettings/ProjectSettings.asset" afterDir="false" />
-    </list>
+    <list default="true" id="78bd6dd1-da32-4688-831b-1c9bd9fc6a9a" name="Default Changelist" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -31,6 +27,7 @@
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/ClientUpdateJob.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/NGUI/Scripts/Editor/UIPanelInspector.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/NGUI/Scripts/Editor/UIWidgetInspector.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/JobifiedServerBehaviour.cs" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
@@ -44,6 +41,8 @@
         <option value="$PROJECT_DIR$/Assets/NGUI/Scripts/Editor/UIPanelInspector.cs" />
         <option value="$PROJECT_DIR$/Assets/NGUI/Scripts/Editor/UIWidgetInspector.cs" />
         <option value="$PROJECT_DIR$/Assets/Scripts/Events Scripts/EventManager.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/JobifiedClientBehaviour.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/JobifiedServerBehaviour.cs" />
       </list>
     </option>
   </component>
@@ -103,6 +102,7 @@
       <workItem from="1571779467577" duration="258000" />
       <workItem from="1571779745219" duration="220000" />
       <workItem from="1571780044961" duration="5410000" />
+      <workItem from="1571865350238" duration="258000" />
     </task>
     <servers />
   </component>

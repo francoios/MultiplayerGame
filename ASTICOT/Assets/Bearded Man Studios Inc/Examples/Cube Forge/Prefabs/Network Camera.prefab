@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 455722}
   - component: {fileID: 2070466}
+  - component: {fileID: 9218060}
   - component: {fileID: 12443496}
   - component: {fileID: 11435740}
   - component: {fileID: 2311310}
@@ -78,6 +79,14 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
+--- !u!92 &9218060
+Behaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 139536}
+  m_Enabled: 1
 --- !u!124 &12443496
 Behaviour:
   m_ObjectHideFlags: 0
@@ -113,7 +122,6 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 2
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:

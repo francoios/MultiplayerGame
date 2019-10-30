@@ -37,8 +37,8 @@ namespace CustomMasterClass
 
         public virtual void OnPlayerConnectedToServer(object arg0)
         {
-            ClientConnectionMsg msg = arg0 as ClientConnectionMsg;
-            Debug.LogWarning("client id == " + msg.ClientInfo.InternalId);
+            //ClientConnectionMsg msg = arg0 as ClientConnectionMsg;
+            //Debug.LogWarning("client id == " + msg.ClientInfo.InternalId);
         }
 
         public virtual void OnGameStarting(object arg0)

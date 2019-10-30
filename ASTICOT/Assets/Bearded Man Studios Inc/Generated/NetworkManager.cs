@@ -10,10 +10,13 @@ namespace BeardedManStudios.Forge.Networking.Unity
 		public event InstantiateEvent objectInitialized;
 		protected BMSByte metadata = new BMSByte();
 
+		public GameObject[] BulletNetworkObject = null;
 		public GameObject[] ChatManagerNetworkObject = null;
 		public GameObject[] CubeForgeGameNetworkObject = null;
 		public GameObject[] ExampleProximityPlayerNetworkObject = null;
+		public GameObject[] GunNetworkObject = null;
 		public GameObject[] NetworkCameraNetworkObject = null;
+		public GameObject[] PlayerNetworkObject = null;
 		public GameObject[] TestNetworkObject = null;
 
 		protected virtual void SetupObjectCreatedEvent()
@@ -32,7 +35,30 @@ namespace BeardedManStudios.Forge.Networking.Unity
 			if (obj.CreateCode < 0)
 				return;
 				
-			if (obj is ChatManagerNetworkObject)
+			if (obj is BulletNetworkObject)
+			{
+				MainThreadManager.Run(() =>
+				{
+					NetworkBehavior newObj = null;
+					if (!NetworkBehavior.skipAttachIds.TryGetValue(obj.NetworkId, out newObj))
+					{
+						if (BulletNetworkObject.Length > 0 && BulletNetworkObject[obj.CreateCode] != null)
+						{
+							var go = Instantiate(BulletNetworkObject[obj.CreateCode]);
+							newObj = go.GetComponent<BulletBehavior>();
+						}
+					}
+
+					if (newObj == null)
+						return;
+						
+					newObj.Initialize(obj);
+
+					if (objectInitialized != null)
+						objectInitialized(newObj, obj);
+				});
+			}
+			else if (obj is ChatManagerNetworkObject)
 			{
 				MainThreadManager.Run(() =>
 				{
@@ -101,6 +127,29 @@ namespace BeardedManStudios.Forge.Networking.Unity
 						objectInitialized(newObj, obj);
 				});
 			}
+			else if (obj is GunNetworkObject)
+			{
+				MainThreadManager.Run(() =>
+				{
+					NetworkBehavior newObj = null;
+					if (!NetworkBehavior.skipAttachIds.TryGetValue(obj.NetworkId, out newObj))
+					{
+						if (GunNetworkObject.Length > 0 && GunNetworkObject[obj.CreateCode] != null)
+						{
+							var go = Instantiate(GunNetworkObject[obj.CreateCode]);
+							newObj = go.GetComponent<GunBehavior>();
+						}
+					}
+
+					if (newObj == null)
+						return;
+						
+					newObj.Initialize(obj);
+
+					if (objectInitialized != null)
+						objectInitialized(newObj, obj);
+				});
+			}
 			else if (obj is NetworkCameraNetworkObject)
 			{
 				MainThreadManager.Run(() =>
@@ -112,6 +161,29 @@ namespace BeardedManStudios.Forge.Networking.Unity
 						{
 							var go = Instantiate(NetworkCameraNetworkObject[obj.CreateCode]);
 							newObj = go.GetComponent<NetworkCameraBehavior>();
+						}
+					}
+
+					if (newObj == null)
+						return;
+						
+					newObj.Initialize(obj);
+
+					if (objectInitialized != null)
+						objectInitialized(newObj, obj);
+				});
+			}
+			else if (obj is PlayerNetworkObject)
+			{
+				MainThreadManager.Run(() =>
+				{
+					NetworkBehavior newObj = null;
+					if (!NetworkBehavior.skipAttachIds.TryGetValue(obj.NetworkId, out newObj))
+					{
+						if (PlayerNetworkObject.Length > 0 && PlayerNetworkObject[obj.CreateCode] != null)
+						{
+							var go = Instantiate(PlayerNetworkObject[obj.CreateCode]);
+							newObj = go.GetComponent<PlayerBehavior>();
 						}
 					}
 
@@ -157,6 +229,18 @@ namespace BeardedManStudios.Forge.Networking.Unity
 			obj.pendingInitialized -= InitializedObject;
 		}
 
+		[Obsolete("Use InstantiateBullet instead, its shorter and easier to type out ;)")]
+		public BulletBehavior InstantiateBulletNetworkObject(int index = 0, Vector3? position = null, Quaternion? rotation = null, bool sendTransform = true)
+		{
+			var go = Instantiate(BulletNetworkObject[index]);
+			var netBehavior = go.GetComponent<BulletBehavior>();
+			var obj = netBehavior.CreateNetworkObject(Networker, index);
+			go.GetComponent<BulletBehavior>().networkObject = (BulletNetworkObject)obj;
+
+			FinalizeInitialization(go, netBehavior, obj, position, rotation, sendTransform);
+			
+			return netBehavior;
+		}
 		[Obsolete("Use InstantiateChatManager instead, its shorter and easier to type out ;)")]
 		public ChatManagerBehavior InstantiateChatManagerNetworkObject(int index = 0, Vector3? position = null, Quaternion? rotation = null, bool sendTransform = true)
 		{
@@ -193,6 +277,18 @@ namespace BeardedManStudios.Forge.Networking.Unity
 			
 			return netBehavior;
 		}
+		[Obsolete("Use InstantiateGun instead, its shorter and easier to type out ;)")]
+		public GunBehavior InstantiateGunNetworkObject(int index = 0, Vector3? position = null, Quaternion? rotation = null, bool sendTransform = true)
+		{
+			var go = Instantiate(GunNetworkObject[index]);
+			var netBehavior = go.GetComponent<GunBehavior>();
+			var obj = netBehavior.CreateNetworkObject(Networker, index);
+			go.GetComponent<GunBehavior>().networkObject = (GunNetworkObject)obj;
+
+			FinalizeInitialization(go, netBehavior, obj, position, rotation, sendTransform);
+			
+			return netBehavior;
+		}
 		[Obsolete("Use InstantiateNetworkCamera instead, its shorter and easier to type out ;)")]
 		public NetworkCameraBehavior InstantiateNetworkCameraNetworkObject(int index = 0, Vector3? position = null, Quaternion? rotation = null, bool sendTransform = true)
 		{
@@ -200,6 +296,18 @@ namespace BeardedManStudios.Forge.Networking.Unity
 			var netBehavior = go.GetComponent<NetworkCameraBehavior>();
 			var obj = netBehavior.CreateNetworkObject(Networker, index);
 			go.GetComponent<NetworkCameraBehavior>().networkObject = (NetworkCameraNetworkObject)obj;
+
+			FinalizeInitialization(go, netBehavior, obj, position, rotation, sendTransform);
+			
+			return netBehavior;
+		}
+		[Obsolete("Use InstantiatePlayer instead, its shorter and easier to type out ;)")]
+		public PlayerBehavior InstantiatePlayerNetworkObject(int index = 0, Vector3? position = null, Quaternion? rotation = null, bool sendTransform = true)
+		{
+			var go = Instantiate(PlayerNetworkObject[index]);
+			var netBehavior = go.GetComponent<PlayerBehavior>();
+			var obj = netBehavior.CreateNetworkObject(Networker, index);
+			go.GetComponent<PlayerBehavior>().networkObject = (PlayerNetworkObject)obj;
 
 			FinalizeInitialization(go, netBehavior, obj, position, rotation, sendTransform);
 			
@@ -218,6 +326,57 @@ namespace BeardedManStudios.Forge.Networking.Unity
 			return netBehavior;
 		}
 
+		/// <summary>
+		/// Instantiate an instance of Bullet
+		/// </summary>
+		/// <returns>
+		/// A local instance of BulletBehavior
+		/// </returns>
+		/// <param name="index">The index of the Bullet prefab in the NetworkManager to Instantiate</param>
+		/// <param name="position">Optional parameter which defines the position of the created GameObject</param>
+		/// <param name="rotation">Optional parameter which defines the rotation of the created GameObject</param>
+		/// <param name="sendTransform">Optional Parameter to send transform data to other connected clients on Instantiation</param>
+		public BulletBehavior InstantiateBullet(int index = 0, Vector3? position = null, Quaternion? rotation = null, bool sendTransform = true)
+		{
+			var go = Instantiate(BulletNetworkObject[index]);
+			var netBehavior = go.GetComponent<BulletBehavior>();
+
+			NetworkObject obj = null;
+			if (!sendTransform && position == null && rotation == null)
+				obj = netBehavior.CreateNetworkObject(Networker, index);
+			else
+			{
+				metadata.Clear();
+
+				if (position == null && rotation == null)
+				{
+					byte transformFlags = 0x1 | 0x2;
+					ObjectMapper.Instance.MapBytes(metadata, transformFlags);
+					ObjectMapper.Instance.MapBytes(metadata, go.transform.position, go.transform.rotation);
+				}
+				else
+				{
+					byte transformFlags = 0x0;
+					transformFlags |= (byte)(position != null ? 0x1 : 0x0);
+					transformFlags |= (byte)(rotation != null ? 0x2 : 0x0);
+					ObjectMapper.Instance.MapBytes(metadata, transformFlags);
+
+					if (position != null)
+						ObjectMapper.Instance.MapBytes(metadata, position.Value);
+
+					if (rotation != null)
+						ObjectMapper.Instance.MapBytes(metadata, rotation.Value);
+				}
+
+				obj = netBehavior.CreateNetworkObject(Networker, index, metadata.CompressBytes());
+			}
+
+			go.GetComponent<BulletBehavior>().networkObject = (BulletNetworkObject)obj;
+
+			FinalizeInitialization(go, netBehavior, obj, position, rotation, sendTransform);
+			
+			return netBehavior;
+		}
 		/// <summary>
 		/// Instantiate an instance of ChatManager
 		/// </summary>
@@ -372,6 +531,57 @@ namespace BeardedManStudios.Forge.Networking.Unity
 			return netBehavior;
 		}
 		/// <summary>
+		/// Instantiate an instance of Gun
+		/// </summary>
+		/// <returns>
+		/// A local instance of GunBehavior
+		/// </returns>
+		/// <param name="index">The index of the Gun prefab in the NetworkManager to Instantiate</param>
+		/// <param name="position">Optional parameter which defines the position of the created GameObject</param>
+		/// <param name="rotation">Optional parameter which defines the rotation of the created GameObject</param>
+		/// <param name="sendTransform">Optional Parameter to send transform data to other connected clients on Instantiation</param>
+		public GunBehavior InstantiateGun(int index = 0, Vector3? position = null, Quaternion? rotation = null, bool sendTransform = true)
+		{
+			var go = Instantiate(GunNetworkObject[index]);
+			var netBehavior = go.GetComponent<GunBehavior>();
+
+			NetworkObject obj = null;
+			if (!sendTransform && position == null && rotation == null)
+				obj = netBehavior.CreateNetworkObject(Networker, index);
+			else
+			{
+				metadata.Clear();
+
+				if (position == null && rotation == null)
+				{
+					byte transformFlags = 0x1 | 0x2;
+					ObjectMapper.Instance.MapBytes(metadata, transformFlags);
+					ObjectMapper.Instance.MapBytes(metadata, go.transform.position, go.transform.rotation);
+				}
+				else
+				{
+					byte transformFlags = 0x0;
+					transformFlags |= (byte)(position != null ? 0x1 : 0x0);
+					transformFlags |= (byte)(rotation != null ? 0x2 : 0x0);
+					ObjectMapper.Instance.MapBytes(metadata, transformFlags);
+
+					if (position != null)
+						ObjectMapper.Instance.MapBytes(metadata, position.Value);
+
+					if (rotation != null)
+						ObjectMapper.Instance.MapBytes(metadata, rotation.Value);
+				}
+
+				obj = netBehavior.CreateNetworkObject(Networker, index, metadata.CompressBytes());
+			}
+
+			go.GetComponent<GunBehavior>().networkObject = (GunNetworkObject)obj;
+
+			FinalizeInitialization(go, netBehavior, obj, position, rotation, sendTransform);
+			
+			return netBehavior;
+		}
+		/// <summary>
 		/// Instantiate an instance of NetworkCamera
 		/// </summary>
 		/// <returns>
@@ -417,6 +627,57 @@ namespace BeardedManStudios.Forge.Networking.Unity
 			}
 
 			go.GetComponent<NetworkCameraBehavior>().networkObject = (NetworkCameraNetworkObject)obj;
+
+			FinalizeInitialization(go, netBehavior, obj, position, rotation, sendTransform);
+			
+			return netBehavior;
+		}
+		/// <summary>
+		/// Instantiate an instance of Player
+		/// </summary>
+		/// <returns>
+		/// A local instance of PlayerBehavior
+		/// </returns>
+		/// <param name="index">The index of the Player prefab in the NetworkManager to Instantiate</param>
+		/// <param name="position">Optional parameter which defines the position of the created GameObject</param>
+		/// <param name="rotation">Optional parameter which defines the rotation of the created GameObject</param>
+		/// <param name="sendTransform">Optional Parameter to send transform data to other connected clients on Instantiation</param>
+		public PlayerBehavior InstantiatePlayer(int index = 0, Vector3? position = null, Quaternion? rotation = null, bool sendTransform = true)
+		{
+			var go = Instantiate(PlayerNetworkObject[index]);
+			var netBehavior = go.GetComponent<PlayerBehavior>();
+
+			NetworkObject obj = null;
+			if (!sendTransform && position == null && rotation == null)
+				obj = netBehavior.CreateNetworkObject(Networker, index);
+			else
+			{
+				metadata.Clear();
+
+				if (position == null && rotation == null)
+				{
+					byte transformFlags = 0x1 | 0x2;
+					ObjectMapper.Instance.MapBytes(metadata, transformFlags);
+					ObjectMapper.Instance.MapBytes(metadata, go.transform.position, go.transform.rotation);
+				}
+				else
+				{
+					byte transformFlags = 0x0;
+					transformFlags |= (byte)(position != null ? 0x1 : 0x0);
+					transformFlags |= (byte)(rotation != null ? 0x2 : 0x0);
+					ObjectMapper.Instance.MapBytes(metadata, transformFlags);
+
+					if (position != null)
+						ObjectMapper.Instance.MapBytes(metadata, position.Value);
+
+					if (rotation != null)
+						ObjectMapper.Instance.MapBytes(metadata, rotation.Value);
+				}
+
+				obj = netBehavior.CreateNetworkObject(Networker, index, metadata.CompressBytes());
+			}
+
+			go.GetComponent<PlayerBehavior>().networkObject = (PlayerNetworkObject)obj;
 
 			FinalizeInitialization(go, netBehavior, obj, position, rotation, sendTransform);
 			

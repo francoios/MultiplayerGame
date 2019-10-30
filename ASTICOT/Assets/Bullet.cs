@@ -9,12 +9,17 @@ public class Bullet : BulletBehavior
     protected override void NetworkStart()
     {
         base.NetworkStart();
+        this.gameObject.SetActive(true);
         if (!this.networkObject.IsOwner)
         {
             Destroy(GetComponent<Rigidbody2D>());
             Destroy(GetComponent<Collider2D>());
         }
-        GetComponent<Rigidbody2D>().AddForce(Vector2.right * 100, ForceMode2D.Impulse);
+        else
+        {
+            this.transform.position += transform.right / 1.5f;
+            GetComponent<Rigidbody2D>().AddForce(transform.right * 10, ForceMode2D.Impulse);
+        }
     }
 
     // Update is called once per frame
@@ -32,14 +37,21 @@ public class Bullet : BulletBehavior
             return;
         }
 
+        this.networkObject.position = this.transform.position;
+
         if (this.transform.position.y < -10)
         {
             this.networkObject.Destroy();
         }
     }
 
-    private void OnCollisionEnter(Collision triggeringCollision)
+    private void OnCollisionEnter2D(Collision2D collision)
     {
+        if (!this.networkObject.IsOwner)
+        {
+            return;
+        }
+
         this.networkObject.Destroy();
     }
 }

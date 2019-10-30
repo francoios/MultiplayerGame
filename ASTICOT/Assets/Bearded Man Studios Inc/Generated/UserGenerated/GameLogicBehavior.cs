@@ -4,12 +4,13 @@ using UnityEngine;
 
 namespace BeardedManStudios.Forge.Networking.Generated
 {
-	[GeneratedRPC("{\"types\":[]")]
-	[GeneratedRPCVariableNames("{\"types\":[]")]
-	public abstract partial class GunBehavior : NetworkBehavior
+	[GeneratedRPC("{\"types\":[[\"Vector3\", \"Quaternion\"]]")]
+	[GeneratedRPCVariableNames("{\"types\":[[\"position\", \"rotation\"]]")]
+	public abstract partial class GameLogicBehavior : NetworkBehavior
 	{
+		public const byte RPC_SPAWN_BULLET = 0 + 5;
 		
-		public GunNetworkObject networkObject = null;
+		public GameLogicNetworkObject networkObject = null;
 
 		public override void Initialize(NetworkObject obj)
 		{
@@ -17,10 +18,11 @@ namespace BeardedManStudios.Forge.Networking.Generated
 			if (networkObject != null && networkObject.AttachedBehavior != null)
 				return;
 			
-			networkObject = (GunNetworkObject)obj;
+			networkObject = (GameLogicNetworkObject)obj;
 			networkObject.AttachedBehavior = this;
 
 			base.SetupHelperRpcs(networkObject);
+			networkObject.RegisterRpc("spawnBullet", spawnBullet, typeof(Vector3), typeof(Quaternion));
 
 			networkObject.onDestroy += DestroyGameObject;
 
@@ -78,7 +80,7 @@ namespace BeardedManStudios.Forge.Networking.Generated
 
 		public override void Initialize(NetWorker networker, byte[] metadata = null)
 		{
-			Initialize(new GunNetworkObject(networker, createCode: TempAttachCode, metadata: metadata));
+			Initialize(new GameLogicNetworkObject(networker, createCode: TempAttachCode, metadata: metadata));
 		}
 
 		private void DestroyGameObject(NetWorker sender)
@@ -89,7 +91,7 @@ namespace BeardedManStudios.Forge.Networking.Generated
 
 		public override NetworkObject CreateNetworkObject(NetWorker networker, int createCode, byte[] metadata = null)
 		{
-			return new GunNetworkObject(networker, this, createCode, metadata);
+			return new GameLogicNetworkObject(networker, this, createCode, metadata);
 		}
 
 		protected override void InitializedTransform()
@@ -97,6 +99,12 @@ namespace BeardedManStudios.Forge.Networking.Generated
 			networkObject.SnapInterpolations();
 		}
 
+		/// <summary>
+		/// Arguments:
+		/// Vector3 position
+		/// Quaternion rotation
+		/// </summary>
+		public abstract void spawnBullet(RpcArgs args);
 
 		// DO NOT TOUCH, THIS GETS GENERATED PLEASE EXTEND THIS CLASS IF YOU WISH TO HAVE CUSTOM CODE ADDITIONS
 	}

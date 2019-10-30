@@ -1,20 +1,22 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using Unity.Networking.Transport;
 using UnityEngine;
 using UnityEngine.Events;
+
+
 
 [System.Serializable]
 public class EventMsg : UnityEvent<System.Object>
 {
 }
 
+/*
 [System.Serializable]
 public class ClientConnectionMsg : UnityEvent<System.Object>
 {
     public NetworkConnection ClientInfo;
 }
-
+*/
 
 public class EventManager : MonoBehaviour
 {

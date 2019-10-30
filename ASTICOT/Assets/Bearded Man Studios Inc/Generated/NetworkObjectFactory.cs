@@ -39,6 +39,10 @@ namespace BeardedManStudios.Forge.Networking.Generated
 						availableCallback = true;
 						obj = new ExampleProximityPlayerNetworkObject(networker, id, frame);
 						break;
+					case GameLogicNetworkObject.IDENTITY:
+						availableCallback = true;
+						obj = new GameLogicNetworkObject(networker, id, frame);
+						break;
 					case GunNetworkObject.IDENTITY:
 						availableCallback = true;
 						obj = new GunNetworkObject(networker, id, frame);

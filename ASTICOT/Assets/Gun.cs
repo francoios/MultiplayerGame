@@ -5,6 +5,13 @@ using UnityEngine;
 
 public class Gun : GunBehavior
 {
+    private GameLogic gameLogic;
+
+    private void Awake()
+    {
+        this.gameLogic = FindObjectOfType<GameLogic>();
+    }
+
     private void Update()
     {
         if (this.networkObject == null)
@@ -29,18 +36,11 @@ public class Gun : GunBehavior
 
         this.transform.rotation = Quaternion.Euler(0, 0, AngleDeg);
 
-        Vector3 bulletPos = this.transform.position + Vector3.right * 2;
-
         if (Input.GetMouseButtonDown(0))
         {
-            this.networkObject.SendRpc(RPC_FIRE, Receivers.Server, bulletPos, this.transform.rotation);
+            this.gameLogic.networkObject.SendRpc(GameLogic.RPC_SPAWN_BULLET, Receivers.Server, this.transform.position, this.transform.rotation);
         }
 
         this.networkObject.rotation = this.transform.rotation;
-    }
-
-    public override void fire(RpcArgs args)
-    {
-        NetworkManager.Instance.InstantiateBullet(position: args.GetNext<Vector3>(), rotation: args.GetNext<Quaternion>());
     }
 }

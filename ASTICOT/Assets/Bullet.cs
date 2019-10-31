@@ -1,11 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using BeardedManStudios.Forge.Networking.Generated;
+using BeardedManStudios.Forge.Networking.Unity;
 using UnityEngine;
 
 public class Bullet : BulletBehavior
 {
-
     protected override void NetworkStart()
     {
         base.NetworkStart();
@@ -14,11 +14,13 @@ public class Bullet : BulletBehavior
         {
             Destroy(GetComponent<Rigidbody2D>());
             Destroy(GetComponent<Collider2D>());
+            this.networkObject.positionInterpolation.current = this.transform.position;
         }
         else
         {
             this.transform.position += transform.right / 1.5f;
             GetComponent<Rigidbody2D>().AddForce(transform.right * 10, ForceMode2D.Impulse);
+            this.networkObject.position = this.transform.position;
         }
     }
 

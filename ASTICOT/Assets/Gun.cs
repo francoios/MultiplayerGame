@@ -36,7 +36,7 @@ public class Gun : GunBehavior
 
         this.transform.rotation = Quaternion.Euler(0, 0, AngleDeg);
 
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButton(0))
         {
             this.gameLogic.networkObject.SendRpc(GameLogic.RPC_SPAWN_BULLET, Receivers.Server, this.transform.position, this.transform.rotation);
         }
